@@ -8,7 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Ez a lépés segít a modernebb Docker buildek kezelésében
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -22,9 +27,8 @@ jobs:
           context: .
           push: true
           tags: bww01/itkapp_main:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-#asddfg
+          # A cache sorokat töröltem, hogy ne ezen bukjon el a folyamat
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -37,5 +41,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/itkapp2
+            # Biztos ami biztos, itt is lépjünk be a Dockerbe, ha az image privát
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker compose pull app
             docker compose up -d
