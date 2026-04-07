@@ -1,0 +1,209 @@
+{
+  "id": "087a57d2-39e9-4d7e-99a7-43b6183d6883",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Associations": {
+      "name": "Associations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "links": {
+          "name": "links",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Associations_ldapUsername_LdapInfo_ldapUsername_fk": {
+          "name": "Associations_ldapUsername_LdapInfo_ldapUsername_fk",
+          "tableFrom": "Associations",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "ldapUsername"
+          ],
+          "columnsTo": [
+            "ldapUsername"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Associations_ldapUsername_unique": {
+          "name": "Associations_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.LdapInfo": {
+      "name": "LdapInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "familyName": {
+          "name": "familyName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "givenName": {
+          "name": "givenName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "LdapInfo_ldapUsername_unique": {
+          "name": "LdapInfo_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.PasswordlessCred": {
+      "name": "PasswordlessCred",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "externalId": {
+          "name": "externalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "publicKey": {
+          "name": "publicKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "algorithm": {
+          "name": "algorithm",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counter": {
+          "name": "counter",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "PasswordlessCred_userId_LdapInfo_id_fk": {
+          "name": "PasswordlessCred_userId_LdapInfo_id_fk",
+          "tableFrom": "PasswordlessCred",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "PasswordlessCred_externalId_unique": {
+          "name": "PasswordlessCred_externalId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "externalId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

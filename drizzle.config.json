@@ -1,0 +1,8 @@
+{
+  "schema": "./server/db/schema.ts",
+  "out": "./drizzle",
+  "dialect": "postgresql",
+  "dbCredentials": {
+    "url": "postgresql://user:12345@db:5432/user_data"
+  }
+}
