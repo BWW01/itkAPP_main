@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-    const publicRoutes = ["/login"];
+    const publicRoutes = ["/login", "/health"];
     if (publicRoutes.includes(to.path)) return;
 
     const { loggedIn } = useUserSession();
