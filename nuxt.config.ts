@@ -38,8 +38,8 @@ export default defineNuxtConfig({
             enabled: true, // enables PWA in dev mode
         },
         strategies: "injectManifest",
-        srcDir: "public",
-        filename: "sw-push.ts",
+        srcDir: ".",
+        filename: "public/sw-push.ts",
     },
     components: [{ path: "~/components", pathPrefix: false }],
     shadcn: {
