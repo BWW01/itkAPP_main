@@ -41,7 +41,7 @@ export default defineNuxtConfig({
         },
         strategies: "injectManifest",
         srcDir: ".",
-        filename: "public/sw-push.ts",
+        filename: "sw-push.ts",
     },
     components: [{ path: "~/components", pathPrefix: false }],
     shadcn: {
