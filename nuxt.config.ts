@@ -1,5 +1,5 @@
+import type { NuxtConfig } from "@vite-pwa/nuxt";
 export default defineNuxtConfig({
-    runtimeConfig: {},
     compatibilityDate: "2025-07-15",
     devtools: { enabled: true },
     modules: [
@@ -10,10 +10,36 @@ export default defineNuxtConfig({
         "shadcn-nuxt",
         "@vueuse/nuxt",
         "nuxt-auth-utils",
+        "@vite-pwa/nuxt",
     ],
     imports: {
         autoImport: true,
         dirs: ["composables/**", "utils/**", "stores/**"],
+    },
+    runtimeConfig: {
+        vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
+        vapidMailto: process.env.VAPID_MAILTO,
+        public: {
+            vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+        },
+    },
+
+    pwa: {
+        registerType: "autoUpdate",
+        manifest: {
+            name: "My PWA",
+            short_name: "PWA",
+            theme_color: "#ffffff",
+        },
+        workbox: {
+            navigateFallback: "/",
+        },
+        devOptions: {
+            enabled: true, // enables PWA in dev mode
+        },
+        strategies: "injectManifest",
+        srcDir: "public",
+        filename: "sw-push.js",
     },
     components: [{ path: "~/components", pathPrefix: false }],
     shadcn: {
@@ -29,4 +55,5 @@ export default defineNuxtConfig({
     image: {
         provider: "ipx",
     },
-});
+
+}satisfies NuxtConfig);

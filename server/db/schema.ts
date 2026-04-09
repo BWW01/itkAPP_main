@@ -36,3 +36,18 @@ export const associations = pgTable("Associations", {
     links: text("links").array().notNull().default([]),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const pushSubscriptions = pgTable(
+    "PushSubscriptions",
+    {
+        id: serial("id").primaryKey(),
+        userId: integer("userId")
+            .notNull()
+            .references(() => ldapInfo.id, { onDelete: "cascade" }),
+        endpoint: text("endpoint").notNull(),
+        p256dh: text("p256dh").notNull(),
+        auth: text("auth").notNull(),
+        createdAt: timestamp("createdAt").defaultNow().notNull(),
+    },
+    (table) => [uniqueIndex("endpoint_idx").on(table.endpoint)]
+);
