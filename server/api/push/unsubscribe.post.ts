@@ -1,5 +1,5 @@
-import { pushSubscriptions } from "~/drizzle/schema";
-import { db } from "~/server/utils/db";
+import { pushSubscriptions } from "../../drizzle/schema";
+import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {

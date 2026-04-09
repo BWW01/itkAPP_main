@@ -1,8 +1,7 @@
 import webpush from "web-push";
-import { pushSubscriptions } from "~/drizzle/schema";
-import { db } from "~/server/utils/db";
+import { pushSubscriptions } from "../../drizzle/schema";
+import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
-
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
     const body = await readBody<{
