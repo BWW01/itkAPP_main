@@ -1,11 +1,8 @@
 import { authenticate } from "ldap-authentication";
 
-// Ide csatlakozik a Nuxt, az SSH alagút pedig elviszi az egyetemig
-//const LDAP_URL = "ldap://localhost:3890";
-//const LDAP_URL = "ldap://ldap2.itk.ppke.hu";
-//const BASE_DN = "dc=itk,dc=ppke,dc=hu";
+const LDAP_URL = "ldap://localhost:3890";
+//const LDAP_URL="ldap://ldap2.itk.ppke.hu:389"
 
-const LDAP_URL="ldap://ldap2.itk.ppke.hu:389"
 const BASE_DN = "dc=itk,dc=ppke,dc=hu";
 
 

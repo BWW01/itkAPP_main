@@ -15,7 +15,7 @@
   "dependencies": {
     "@nuxt/eslint": "1.15.2",
     "@nuxt/icon": "2.2.1",
-    "@nuxt/image": "2.0.0",
+    "@nuxt/image": "^2.0.0",
     "@nuxtjs/tailwindcss": "7.0.0-beta.1",
     "@types/node": "^25.3.5",
     "@vueuse/core": "^14.2.1",
@@ -38,7 +38,7 @@
     "nuxt-auth-utils": "0.5.29",
     "postgres": "^3.4.8",
     "recharts": "^3.8.0",
-    "reka-ui": "^2.9.0",
+    "reka-ui": "^2.9.5",
     "shadcn-nuxt": "2.4.3",
     "tailwind-merge": "^3.5.0",
     "uuid": "^13.0.0",
