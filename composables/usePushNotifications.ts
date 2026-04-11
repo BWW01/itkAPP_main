@@ -1,9 +1,9 @@
 import {useRuntimeConfig} from "nuxt/app";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = "=".repeat((4-(base64String.length - 4)) % 4);
+    const padding = "=".repeat((4-(base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-        .replace(/_/g, "+")
+        .replace(/\_/g, "+")
         .replace(/_/g, "/")
     const rawData = atob(base64);
     return Uint8Array.from([...rawData].map((c)=> c.charCodeAt(0)));
@@ -30,7 +30,7 @@ export const usePushNotifications = () => {
     }
 
     const subscribe = async (): Promise<PushSubscription | null> => {
-        if(permission.value == "granted"){
+        if(permission.value !== "granted"){
             const granted = await requestPermission();
             if(!granted){return null;}
         }
