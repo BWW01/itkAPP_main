@@ -42,12 +42,21 @@ export const usePushNotifications = () => {
     }
 
     const subscribe = async (): Promise<PushSubscription | null> => {
-        if(permission.value !== "granted"){
+        console.log("permission.value:", permission.value);
+        console.log("Notification.permission:", Notification.permission);
+        console.log("serviceWorker ready?", "serviceWorker" in navigator);
+
+        if (permission.value !== "granted") {
             const granted = await requestPermission();
-            if(!granted){return null;}
+            console.log("requestPermission result:", granted);
+            if (!granted) { return null; }
         }
 
         const registration = await navigator.serviceWorker.ready;
+        console.log("registration:", registration);
+
+        const existing = await registration.pushManager.getSubscription();
+        console.log("existing subscription:", existing);
 
         const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
@@ -55,6 +64,7 @@ export const usePushNotifications = () => {
                 config.public.vapidPublicKey
             ),
         });
+        console.log("new subscription:", subscription);
 
         await $fetch("/api/push/subscribe", {
             method: "POST",
