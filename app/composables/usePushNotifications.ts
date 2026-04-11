@@ -23,6 +23,18 @@ export const usePushNotifications = () => {
         isSupported.value? Notification.permission : "default"
     );
 
+    if (isSupported.value) {
+        navigator.permissions.query({ name: "notifications" }).then((status) => {
+            // Sync initial value
+            permission.value = Notification.permission;
+            // Keep in sync if it changes
+            status.onchange = () => {
+                permission.value = Notification.permission;
+            };
+        });
+    }
+
+
     const requestPermission = async (): Promise<boolean> => {
         if(!isSupported.value){return false;}
         permission.value = await Notification.requestPermission();
