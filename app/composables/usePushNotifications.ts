@@ -1,12 +1,12 @@
 import {useRuntimeConfig} from "nuxt/app";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = "=".repeat((4-(base64String.length % 4)) % 4);
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-        .replace(/\_/g, "+")
-        .replace(/_/g, "/")
+        .replace(/-/g, "+")  // ✅ dash to plus
+        .replace(/_/g, "/")  // ✅ underscore to slash
     const rawData = atob(base64);
-    return Uint8Array.from([...rawData].map((c)=> c.charCodeAt(0)));
+    return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
 export const usePushNotifications = () => {
