@@ -57,6 +57,11 @@ export const usePushNotifications = () => {
         const existing = await registration.pushManager.getSubscription();
         console.log("existing subscription:", existing);
 
+        console.log("vapidPublicKey raw:", config.public.vapidPublicKey);
+        const key = urlBase64ToUint8Array(config.public.vapidPublicKey);
+        console.log("converted key length:", key.length); // must be 65
+        console.log("converted key:", key);
+
         const subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(
