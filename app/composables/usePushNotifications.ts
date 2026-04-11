@@ -15,8 +15,9 @@ export const usePushNotifications = () => {
     const isSupported = computed(
         () =>
             typeof window !== "undefined" &&
-            "Notifications" in window &&
-            "serviceWorker" in navigator
+            "Notification" in window &&
+            "serviceWorker" in navigator &&
+            "PushManager" in window
     );
 
     const permission = ref<NotificationPermission>(
