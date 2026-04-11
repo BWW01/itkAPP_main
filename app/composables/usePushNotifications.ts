@@ -14,21 +14,19 @@ export const usePushNotifications = () => {
 
     const isSupported = computed(
         () =>
-            typeof window !== "undefined" &&
+            import.meta.client &&
             "Notification" in window &&
             "serviceWorker" in navigator &&
             "PushManager" in window
     );
 
-    const permission = ref<NotificationPermission>(
-        isSupported.value? Notification.permission : "default"
-    );
+    const permission = ref<NotificationPermission>("default");
 
-    if (isSupported.value) {
+    if (import.meta.client) {
+        permission.value = Notification.permission;
+
         navigator.permissions.query({ name: "notifications" }).then((status) => {
-            // Sync initial value
             permission.value = Notification.permission;
-            // Keep in sync if it changes
             status.onchange = () => {
                 permission.value = Notification.permission;
             };
