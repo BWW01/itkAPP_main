@@ -24,7 +24,13 @@ export default defineNuxtConfig({
         },
     },
 
-
+    eslint: {
+        config: {
+            nuxt: {
+                sortConfigKeys: true
+            }
+        }
+    },
 
     pwa: {
         registerType: "autoUpdate",
