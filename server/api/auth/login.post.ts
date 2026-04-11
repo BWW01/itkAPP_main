@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
     const user = await ldapLogin(username, password);
     console.log("LDAP result:", user);
 
+
     if (!user) {
         throw createError({
             statusCode: 401,
