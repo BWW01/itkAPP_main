@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     pwa: {
         registerType: 'autoUpdate',
         strategies: "injectManifest",
-        srcDir: "app",
+        srcDir: ".",
         filename: "sw-push.ts",
         manifest: {
             name: 'ITKApp',
