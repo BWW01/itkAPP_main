@@ -33,8 +33,8 @@ export default defineNuxtConfig({
                 {src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png'},
             ]
         },
-        workbox: {
-            navigateFallback: "/",
+        injectManifest: {
+            injectionPoint: '__WB_MANIFEST',
         },
         client: {
             installPrompt: true,
