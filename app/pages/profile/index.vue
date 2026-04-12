@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Mail } from "lucide-vue-next";
+import {Mail} from "lucide-vue-next";
 
 definePageMeta({
     layout: "default",
 });
+useHead({title: $t('pages.profile')})
 
-const { user } = useUserSession();
+const {user} = useUserSession();
 </script>
 
 <template>
@@ -20,7 +21,7 @@ const { user } = useUserSession();
                 <div class="border border-slate-200 rounded-lg p-6 bg-white">
                     <div class="flex items-start gap-6">
                         <Avatar class="h-20 w-20">
-                            <AvatarImage src="" />
+                            <AvatarImage src=""/>
                             <AvatarFallback class="bg-slate-200 text-slate-700 text-lg font-semibold">
                                 {{ user?.name?.[0] }}
                             </AvatarFallback>
@@ -43,7 +44,7 @@ const { user } = useUserSession();
 
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
-                            <Mail class="h-4 w-4 text-slate-500" />
+                            <Mail class="h-4 w-4 text-slate-500"/>
                             <div>
                                 <p class="text-xs text-slate-600">E-mail</p>
                                 <p class="text-sm font-medium text-slate-900">{{ user?.email }}</p>

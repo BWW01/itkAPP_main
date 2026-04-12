@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { GraduationCap } from "lucide-vue-next";
-const { fetch: refreshSession } = useUserSession();
+import {GraduationCap} from "lucide-vue-next";
+
+const {fetch: refreshSession} = useUserSession();
 definePageMeta({
     layout: "empty",
     auth: false,
 });
+useHead({title: $t('pages.login')})
 
 
 const form = reactive({
@@ -16,21 +18,21 @@ const error = ref("");
 const loading = ref(false);
 
 async function onSubmit() {
-  error.value = "";
-  loading.value = true;
-  try {
-    await $fetch("/api/auth/login", {
-      method: "POST",
-      body: form,
-    });
-    await refreshSession();
-    await navigateTo("/");
-  } catch (e: any) {
-    error.value =
-        e?.data?.message ?? "Érvénytelen felhasználónév vagy jelszó.";
-  } finally {
-    loading.value = false;
-  }
+    error.value = "";
+    loading.value = true;
+    try {
+        await $fetch("/api/auth/login", {
+            method: "POST",
+            body: form,
+        });
+        await refreshSession();
+        await navigateTo("/");
+    } catch (e: any) {
+        error.value =
+            e?.data?.message ?? "Érvénytelen felhasználónév vagy jelszó.";
+    } finally {
+        loading.value = false;
+    }
 }
 </script>
 

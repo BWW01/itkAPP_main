@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type {CalendarEvent} from '@/utils/parseIcs'
+import CalEventRectangle from "~/components/calendar/CalEventRectangle.vue";
+
+const {locale} = useI18n()
 
 const props = defineProps<{
     currentDate: Date
@@ -8,8 +11,16 @@ const props = defineProps<{
 }>()
 
 const HOUR_HEIGHT = 64
-const DAY_LABELS_FULL = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
-const DAY_LABELS_SHORT = ['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V']
+
+const DAY_LABELS_FULL = computed(() => locale.value === 'hu'
+    ? ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
+    : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+)
+
+const DAY_LABELS_SHORT = computed(() => locale.value === 'hu'
+    ? ['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V']
+    : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+)
 const hours = Array.from({length: 24}, (_, i) => i)
 
 const gridStyle = computed(() => `grid-template-columns: 48px repeat(${props.days}, 1fr)`)
@@ -50,29 +61,12 @@ function getEvents(date: Date, allDay: boolean): CalendarEvent[] {
     )
 }
 
-function eventTop(event: CalendarEvent): number {
-    return (event.startHour + event.startMinute / 60) * HOUR_HEIGHT
-}
-
-function eventHeight(event: CalendarEvent): number {
-    const start = event.startHour + event.startMinute / 60
-    const end = event.endHour + event.endMinute / 60
-    return Math.max(end - start, 0.5) * HOUR_HEIGHT
-}
-
 const currentTimeTop = computed(() => {
     const n = new Date()
     return (n.getHours() + n.getMinutes() / 60) * HOUR_HEIGHT
 })
 
-const eventColorClass = (color: string) => {
-    const map: Record<string, string> = {
-        red: 'bg-red-100 text-red-700 border-red-300',
-        blue: 'bg-primary/10 text-primary border-primary/30',
-        green: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    }
-    return map[color] ?? map.green
-}
+const {eventColor} = useEventColor();
 
 function overlaps(a: CalendarEvent, b: CalendarEvent): boolean {
     const aStart = a.startHour * 60 + a.startMinute
@@ -94,6 +88,7 @@ function getLayoutedEvents(date: Date) {
         return {event, col}
     })
 }
+
 </script>
 
 <template>
@@ -120,7 +115,7 @@ function getLayoutedEvents(date: Date) {
                     </span>
                     <div class="w-full space-y-0.5 min-h-4">
                         <div v-for="event in getEvents(date, true)" :key="event.id"
-                             :class="['text-[9px] font-bold px-1.5 py-0.5 rounded truncate border', eventColorClass(event.color)]">
+                             :class="['text-[9px] font-bold px-1.5 py-0.5 rounded truncate border', eventColor(event.color)]">
                             {{ event.title }}
                         </div>
                     </div>
@@ -159,19 +154,7 @@ function getLayoutedEvents(date: Date) {
                     </div>
 
                     <!-- Events -->
-                    <div v-for="{ event, col } in getLayoutedEvents(date)" :key="event.id"
-                         class="absolute z-10 rounded-md border px-1.5 py-1 overflow-hidden cursor-pointer transition-opacity hover:opacity-90"
-                         :class="eventColorClass(event.color)"
-                         :style="`
-                             top: ${eventTop(event)}px;
-                             height: ${eventHeight(event)}px;
-                             left: calc(${col * 50}px + 10px);
-                             right: 10px;
-                         `">
-                        <p class="text-[10px] font-bold truncate leading-tight">{{ event.title }}</p>
-                        <p v-if="event.location" class="text-[9px] opacity-70 truncate">{{ event.location }}</p>
-                        <p v-if="eventHeight(event) > 30" class="text-[9px] opacity-70 font-medium">{{ event.time }}</p>
-                    </div>
+                    <CalEventRectangle v-for="{ event, col } in getLayoutedEvents(date)" :event="event" :col="col"/>
                 </div>
             </div>
         </div>

@@ -1,0 +1,61 @@
+{
+  "pages": {
+    "calendar": "Calendar",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "login": "Login"
+  },
+  "calendar": {
+    "today": "Today",
+    "loading": "Loading...",
+    "error": "Failed to load calendar.",
+    "month": "Month",
+    "week": "Week",
+    "threeDay": "3 days",
+    "day": "Day",
+    "allDay": "All day",
+    "days": {
+      "full": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "short": [
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa",
+        "Su"
+      ]
+    },
+    "connect": {
+      "title": "Connect calendars",
+      "description": "Paste your iCal export links",
+      "moodleLabel": "Moodle iCal link",
+      "moodleOpen": "Open Moodle",
+      "moodlePlaceholder": "https://moodle.itk.ppke.hu/calendar/export.php?...",
+      "neptunLabel": "Neptun iCal link",
+      "neptunOpen": "Open Neptun",
+      "neptunPlaceholder": "https://neptun.ppke.hu/hallgato/ical/...",
+      "button": "Connect calendars",
+      "unknownError": "Unknown error"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved!",
+    "sidebar": {
+      "todos": "To-do",
+      "syncDesc": "Sync all your deadlines and events in one place."
+    },
+    "event": {
+      "details": "Details",
+      "open": "Open"
+    }
+  }
+}

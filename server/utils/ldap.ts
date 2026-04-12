@@ -1,15 +1,13 @@
-import { authenticate } from "ldap-authentication";
+import {authenticate} from "ldap-authentication";
 
-const LDAP_URL="ldap://ldap2.itk.ppke.hu:389"
-//const LDAP_URL="ldap://ldap2.itk.ppke.hu:389"
-
-const BASE_DN = "dc=itk,dc=ppke,dc=hu";
-
+const config = useRuntimeConfig()
+const LDAP_URL = config.ldapUrl
+const BASE_DN = config.ldapBaseDn
 
 export async function ldapLogin(username: string, password: string) {
     try {
         const authenticatedUser = await authenticate({
-            ldapOpts: { url: LDAP_URL },
+            ldapOpts: {url: LDAP_URL},
             userDn: `uid=${username},ou=people,${BASE_DN}`,
             userPassword: password,
         });

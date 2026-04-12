@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Plus, Calendar, BookOpen, Users, X } from "lucide-vue-next";
+import {Plus, Calendar, BookOpen, Users, X} from "lucide-vue-next";
 
 definePageMeta({
     layout: "default",
 });
+useHead({title: $t('pages.dashboard')})
 
-const { user } = useUserSession();
+const {user} = useUserSession();
 
 const showOnboarding = ref(true);
 
@@ -50,9 +51,9 @@ function closeOnboarding() {
 }
 
 const upcomingDeadlines = [
-    { title: "Calculus II HF#3", dueDate: "Holnap, 23:59", color: "border-red-500" },
-    { title: "Fizika Laboratóriumi Jelentés", dueDate: "Augusztus 25, 23:59", color: "border-blue-500" },
-    { title: "Web Dev Projekt", dueDate: "Augusztus 28, 23:59", color: "border-green-500" },
+    {title: "Calculus II HF#3", dueDate: "Holnap, 23:59", color: "border-red-500"},
+    {title: "Fizika Laboratóriumi Jelentés", dueDate: "Augusztus 25, 23:59", color: "border-blue-500"},
+    {title: "Web Dev Projekt", dueDate: "Augusztus 28, 23:59", color: "border-green-500"},
 ];
 </script>
 
@@ -68,7 +69,7 @@ const upcomingDeadlines = [
                             <CardDescription>Kezdjük el 3 lépésben</CardDescription>
                         </div>
                         <Button variant="ghost" size="icon" @click="closeOnboarding">
-                            <X class="h-4 w-4" />
+                            <X class="h-4 w-4"/>
                         </Button>
                     </CardHeader>
 
@@ -90,7 +91,8 @@ const upcomingDeadlines = [
                                             : 'bg-slate-200 text-slate-600',
                                     ]"
                                 >
-                                    <component v-if="!completedSteps.includes(step.id)" :is="step.icon" class="h-4 w-4" />
+                                    <component v-if="!completedSteps.includes(step.id)" :is="step.icon"
+                                               class="h-4 w-4"/>
                                     <span v-else class="text-sm font-semibold">✓</span>
                                 </div>
                             </div>

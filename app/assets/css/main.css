@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    --background: oklch(from hsl(210 9.9% 97.6%) l c h);
+    --background: oklch(from hsl(210 9.9% 96.6%) l c h);
     --foreground: oklch(from hsl(0 0% 3.9%) l c h);
     --card: oklch(from hsl(0 0% 100%) l c h);
     --card-foreground: oklch(from hsl(0 0% 3.9%) l c h);
@@ -172,6 +172,7 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }

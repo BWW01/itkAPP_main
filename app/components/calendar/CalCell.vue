@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CalendarEvent } from '@/utils/parseIcs'
+import type {CalendarEvent} from '@/utils/parseIcs'
 
 defineProps<{
     day: number | null
@@ -32,18 +32,22 @@ defineProps<{
 
         <!-- Events -->
         <div class="absolute inset-x-1.5 top-8 bottom-1.5 overflow-y-auto flex flex-col gap-1">
-            <CalEventPopover v-for="event in events" :key="event.id" :event="event" />
+            <CalEventPopover v-for="event in events" :key="event.id" :event="event"/>
         </div>
     </div>
 </template>
 
 <style scoped>
-.overflow-y-auto::-webkit-scrollbar { width: 4px; }
-.overflow-y-auto::-webkit-scrollbar-track { background: transparent; }
-.overflow-y-auto::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 10px; }
+.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+}
 
-.bg-stripes {
-    background-image: linear-gradient(45deg, var(--card) 25%, var(--background) 25%, var(--background) 50%, var(--card) 50%, var(--card) 75%, var(--background) 75%, var(--background) 100%);
-    background-size: 16.97px 16.97px;
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
 }
 </style>

@@ -1,0 +1,61 @@
+{
+  "pages": {
+    "calendar": "Naptár",
+    "dashboard": "Irányítópult",
+    "profile": "Profil",
+    "login": "Bejelentkezés"
+  },
+  "calendar": {
+    "today": "Ma",
+    "loading": "Betöltés...",
+    "error": "Nem sikerült betölteni a naptárat.",
+    "month": "Hónap",
+    "week": "Hét",
+    "threeDay": "3 nap",
+    "day": "Nap",
+    "allDay": "Egész nap",
+    "days": {
+      "full": [
+        "Hétfő",
+        "Kedd",
+        "Szerda",
+        "Csütörtök",
+        "Péntek",
+        "Szombat",
+        "Vasárnap"
+      ],
+      "short": [
+        "H",
+        "K",
+        "Sze",
+        "Cs",
+        "P",
+        "Szo",
+        "V"
+      ]
+    },
+    "connect": {
+      "title": "Naptárak csatlakoztatása",
+      "description": "Másold be az iCal exportált linkeket",
+      "moodleLabel": "Moodle iCal link",
+      "moodleOpen": "Moodle megnyitása",
+      "moodlePlaceholder": "https://moodle.itk.ppke.hu/calendar/export.php?...",
+      "neptunLabel": "Neptun iCal link",
+      "neptunOpen": "Neptun megnyitása",
+      "neptunPlaceholder": "https://neptun.ppke.hu/hallgato/ical/...",
+      "button": "Naptárak csatlakoztatása",
+      "unknownError": "Ismeretlen hiba"
+    },
+    "save": "Mentés",
+    "saving": "Mentés...",
+    "saved": "Mentve!",
+    "sidebar": {
+      "todos": "Teendők",
+      "syncDesc": "Szinkronizáld az összes határidőd és eseményed egy helyre."
+    },
+    "event": {
+      "details": "Részletek",
+      "open": "Megnyitás"
+    }
+  }
+}

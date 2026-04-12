@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { ChevronLeft, ChevronRight, RefreshCw, AlertCircle } from "lucide-vue-next"
+import {computed} from 'vue'
+import {ChevronLeft, ChevronRight, RefreshCw, AlertCircle} from "lucide-vue-next"
+import type {CalView} from "@/types/calendar";
 
-type CalView = 'month' | 'week' | '3day' | 'day'
+const {locale} = useI18n()
+
 
 const props = defineProps<{
     currentDate: Date
@@ -19,14 +21,14 @@ const emit = defineEmits<{
 }>()
 
 const monthName = computed(() =>
-    props.currentDate.toLocaleString('hu-HU', { month: 'long' })
+    props.currentDate.toLocaleString(locale.value === 'hu' ? 'hu-HU' : 'en-US', {month: 'long'})
 )
 
 const views: { key: CalView, label: string }[] = [
-    { key: 'month', label: 'Hónap' },
-    { key: 'week',  label: 'Hét' },
-    { key: '3day',  label: '3 nap' },
-    { key: 'day',   label: 'Nap' },
+    {key: 'month', label: $t('calendar.month')},
+    {key: 'week', label: $t('calendar.week')},
+    {key: '3day', label: $t('calendar.threeDay')},
+    {key: 'day', label: $t('calendar.day')},
 ]
 </script>
 
@@ -38,20 +40,20 @@ const views: { key: CalView, label: string }[] = [
             </h1>
             <div class="flex items-center bg-muted rounded-lg p-0.5">
                 <Button variant="ghost" size="icon-sm" @click="emit('previous')">
-                    <ChevronLeft class="w-3.5 h-3.5" />
+                    <ChevronLeft class="w-3.5 h-3.5"/>
                 </Button>
-                <Button variant="ghost" size="sm" @click="emit('today')">Ma</Button>
+                <Button variant="ghost" size="sm" @click="emit('goToToday')">{{ $t('calendar.today') }}</Button>
                 <Button variant="ghost" size="icon-sm" @click="emit('next')">
-                    <ChevronRight class="w-3.5 h-3.5" />
+                    <ChevronRight class="w-3.5 h-3.5"/>
                 </Button>
             </div>
 
             <div v-if="loading" class="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
-                <RefreshCw class="w-3 h-3 animate-spin" />
-                Betöltés...
+                <RefreshCw class="w-3 h-3 animate-spin"/>
+                {{ $t('calendar.loading') }}
             </div>
             <div v-if="error" class="flex items-center gap-1.5 text-[10px] text-destructive font-medium">
-                <AlertCircle class="w-3 h-3" />
+                <AlertCircle class="w-3 h-3"/>
                 {{ error }}
             </div>
         </div>

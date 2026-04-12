@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { parseIcsToEvents, type CalendarEvent } from '@/utils/parseIcs'
+import {ref, computed} from 'vue'
+import {parseIcsToEvents, type CalendarEvent} from '@/utils/parseIcs'
+import type {CalView, DayCell} from "@/types/calendar";
 
-definePageMeta({ layout: "default" })
+definePageMeta({layout: "default"})
+useHead({title: $t('pages.calendar')})
 
-const { user } = useUserSession()
+const {user} = useUserSession()
 const username = computed(() => (user.value as any)?.login)
 
 // --- View ---
-type CalView = 'month' | 'week' | '3day' | 'day'
 const view = ref<CalView>('month')
 
 // --- Navigation ---
 const currentDate = ref(new Date())
 
-const monthDays = computed(() => {
+const monthDays = computed<DayCell[]>(() => {
     const year = currentDate.value.getFullYear()
     const month = currentDate.value.getMonth()
     const firstDay = new Date(year, month, 1).getDay()
     const daysInMonth = new Date(year, month + 1, 0).getDate()
     const days = []
     const blankDaysBefore = firstDay === 0 ? 6 : firstDay - 1
-    for (let i = 0; i < blankDaysBefore; i++) days.push({ day: null, current: false })
-    for (let i = 1; i <= daysInMonth; i++) days.push({ day: i, current: true })
+    for (let i = 0; i < blankDaysBefore; i++) days.push({day: null, current: false})
+    for (let i = 1; i <= daysInMonth; i++) days.push({day: i, current: true})
     const remainingCells = days.length % 7
     const blankDaysAfter = remainingCells === 0 ? 0 : 7 - remainingCells
-    for (let i = 0; i < blankDaysAfter; i++) days.push({ day: null, current: false })
+    for (let i = 0; i < blankDaysAfter; i++) days.push({day: null, current: false})
     return days
 })
 
@@ -54,6 +55,10 @@ function goToToday() {
     currentDate.value = new Date()
 }
 
+function goToDate(date: Date) {
+    currentDate.value = date
+}
+
 // --- Events ---
 const events = ref<CalendarEvent[]>([])
 const loading = ref(false)
@@ -65,7 +70,7 @@ async function loadCalendar() {
     error.value = null
     try {
         const icsString = await $fetch<string>(`/api/calendar/${username.value}`, {
-            headers: { Accept: 'text/calendar' }
+            headers: {Accept: 'text/calendar'}
         })
         events.value = parseIcsToEvents(icsString)
     } catch (e: any) {
@@ -113,7 +118,8 @@ const showConnectModal = ref(false)
             :view="view"
             @previous="navigate('previous')"
             @next="navigate('next')"
-            @today="goToToday"
+            @goToToday="goToToday"
+            @goToDate="goToDate"
             @view-change="view = $event"
         />
 
@@ -150,6 +156,7 @@ const showConnectModal = ref(false)
             <CalSidebar
                 :upcoming-events="upcomingEvents"
                 @open-connect-modal="showConnectModal = true"
+                @date-selected="goToDate"
             />
         </div>
     </div>

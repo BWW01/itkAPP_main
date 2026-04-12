@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import type { CalendarEvent } from '@/utils/parseIcs'
+import type {DayCell} from "@/types/calendar";
+import type {CalendarEvent} from '@/utils/parseIcs'
+
+const {locale} = useI18n()
 
 const props = defineProps<{
-    weeks: { day: number | null, current: boolean }[][]
+    weeks: DayCell[][]
     currentDate: Date
     events: CalendarEvent[]
 }>()
 
-const DAY_LABELS = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
+const DAY_LABELS_FULL = computed(() => locale.value === 'hu'
+    ? ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
+    : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+)
 
 function isToday(day: number | null) {
     if (!day) return false
@@ -30,7 +36,7 @@ function getEventsForDate(day: number | null): CalendarEvent[] {
     <div class="flex-1 flex flex-col min-w-0 bg-card overflow-hidden rounded-md">
         <!-- Day headers -->
         <div class="grid grid-cols-7 shrink-0">
-            <div v-for="d in DAY_LABELS" :key="d"
+            <div v-for="d in DAY_LABELS_FULL" :key="d"
                  class="py-2.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center border-r border-border last:border-0">
                 {{ d }}
             </div>

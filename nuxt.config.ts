@@ -1,7 +1,8 @@
-import type { NuxtConfig } from "@vite-pwa/nuxt";
+import {defineNuxtConfig} from 'nuxt/config'
+
 export default defineNuxtConfig({
     compatibilityDate: "2025-07-15",
-    devtools: { enabled: true },
+    devtools: {enabled: true},
     modules: [
         "@nuxt/icon",
         "@nuxt/image",
@@ -10,16 +11,58 @@ export default defineNuxtConfig({
         "shadcn-nuxt",
         "@vueuse/nuxt",
         "nuxt-auth-utils",
+        '@nuxtjs/i18n',
         "@vite-pwa/nuxt",
     ],
+
+    /* PWA options */
+    pwa: {
+        registerType: 'autoUpdate',
+        manifest: {
+            name: 'ITKApp',
+            short_name: 'ITKApp',
+            description: 'PPKE ITKApp',
+            theme_color: '#ffffff',
+            background_color: '#ffffff',
+            display: 'standalone',
+            icons: [
+                {src: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png'},
+                {src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png'},
+            ]
+        },
+        client: {
+            installPrompt: true,
+        },
+        devOptions: {
+            enabled: true,
+        },
+    },
+
+    // Localization
+    i18n: {
+        defaultLocale: 'en',
+        locales: [
+            {code: 'hu', name: 'Magyar', file: 'hu.json'},
+            {code: 'en', name: 'English', file: 'en.json'}
+        ],
+    },
+
+    // CSS location
     css: [
         '~/assets/css/main.css',
     ],
+
+    // Auto importing
     imports: {
         autoImport: true,
         dirs: ["composables/", "utils/", "stores/**"],
     },
+
+    // Env variables
     runtimeConfig: {
+        ldapUrl: process.env.LDAP_URL,
+        ldapBaseDn: process.env.LDAP_BASE_DN,
+
         vapidPrivateKey: "",   // set via NUXT_VAPID_PRIVATE_KEY
         vapidMailto: "",       // set via NUXT_VAPID_MAILTO
         public: {
@@ -27,6 +70,7 @@ export default defineNuxtConfig({
         },
     },
 
+    // ESLint config
     eslint: {
         config: {
             nuxt: {
@@ -35,36 +79,24 @@ export default defineNuxtConfig({
         }
     },
 
-    pwa: {
-        registerType: "autoUpdate",
-        manifest: {
-            name: "My PWA",
-            short_name: "PWA",
-            theme_color: "#ffffff",
-        },
-        workbox: {
-            navigateFallback: "/",
-        },
-        devOptions: {
-            enabled: true, // enables PWA in dev mode
-        },
-        strategies: "injectManifest",
-        srcDir: ".",
-        filename: "sw-push.ts",
-    },
-    components: [{ path: "~/components", pathPrefix: false }],
+    // ShadCN Settings
+    components: [{path: "~/components", pathPrefix: false}],
     shadcn: {
         prefix: "",
         componentDir: "@/components/ui",
     },
+
+    // Nitro Server
     nitro: {
         externals: {
             external: ["sharp"],
             inline: ["ipx", "ofetch"],
         },
     },
+
+    // Image provider
     image: {
         provider: "ipx",
     },
 
-}satisfies NuxtConfig);
+})
