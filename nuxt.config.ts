@@ -18,6 +18,9 @@ export default defineNuxtConfig({
     /* PWA options */
     pwa: {
         registerType: 'autoUpdate',
+        strategies: "injectManifest",
+        srcDir: "app",
+        filename: "sw-push.ts",
         manifest: {
             name: 'ITKApp',
             short_name: 'ITKApp',
@@ -30,11 +33,15 @@ export default defineNuxtConfig({
                 {src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png'},
             ]
         },
+        workbox: {
+            navigateFallback: "/",
+        },
         client: {
             installPrompt: true,
         },
         devOptions: {
             enabled: true,
+            type: 'module',
         },
     },
 
