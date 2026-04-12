@@ -67,6 +67,9 @@ export const usePushNotifications = () => {
             applicationServerKey: urlBase64ToUint8Array(
                 config.public.vapidPublicKey
             ),
+        }).catch((err) => {
+            console.error("pushManager.subscribe error:", err.name, err.message);
+            throw err;
         });
         console.log("new subscription:", subscription);
 
