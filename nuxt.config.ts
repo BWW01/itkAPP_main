@@ -12,9 +12,12 @@ export default defineNuxtConfig({
         "nuxt-auth-utils",
         "@vite-pwa/nuxt",
     ],
+    css: [
+        '~/assets/css/main.css',
+    ],
     imports: {
         autoImport: true,
-        dirs: ["composables/**", "utils/**", "stores/**"],
+        dirs: ["composables/", "utils/", "stores/**"],
     },
     runtimeConfig: {
         vapidPrivateKey: "",   // set via NUXT_VAPID_PRIVATE_KEY
@@ -35,42 +38,33 @@ export default defineNuxtConfig({
     pwa: {
         registerType: "autoUpdate",
         manifest: {
-            name: "ITK App",
-            short_name: "ITKApp",
+            name: "My PWA",
+            short_name: "PWA",
             theme_color: "#ffffff",
-            background_color: "#ffffff",
-            display: "standalone",
-            orientation: "portrait",
-            scope: "/",
-            start_url: "/",
-            icons: [
-                {
-                    src: "/icon-192.png",
-                    sizes: "192x192",
-                    type: "image/png",
-                },
-                {
-                    src: "/icon-512.png",
-                    sizes: "512x512",
-                    type: "image/png",
-                },
-                {
-                    src: "/icon-512.png",
-                    sizes: "512x512",
-                    type: "image/png",
-                    purpose: "maskable",
-                },
-            ],
         },
         workbox: {
             navigateFallback: "/",
         },
         devOptions: {
-            enabled: true,
+            enabled: true, // enables PWA in dev mode
         },
         strategies: "injectManifest",
         srcDir: ".",
         filename: "sw-push.ts",
+    },
+    components: [{ path: "~/components", pathPrefix: false }],
+    shadcn: {
+        prefix: "",
+        componentDir: "@/components/ui",
+    },
+    nitro: {
+        externals: {
+            external: ["sharp"],
+            inline: ["ipx", "ofetch"],
+        },
+    },
+    image: {
+        provider: "ipx",
     },
 
 }satisfies NuxtConfig);
