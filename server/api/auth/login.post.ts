@@ -28,29 +28,27 @@ export default defineEventHandler(async (event) => {
     const [familyName, ...givenNames] = displayName.split(" ");
     const givenName = givenNames.join(" ") || familyName;
 
-    try {
-        await db
-            .insert(ldapInfo)
-            .values({
-                ldapUsername: username,
+    const [dbUser] = await db
+        .insert(ldapInfo)
+        .values({
+            ldapUsername: username,
+            email: user.mail || null,
+            familyName,
+            givenName,
+        })
+        .onConflictDoUpdate({
+            target: ldapInfo.ldapUsername,
+            set: {
                 email: user.mail || null,
                 familyName,
                 givenName,
-            })
-            .onConflictDoUpdate({
-                target: ldapInfo.ldapUsername,
-                set: {
-                    email: user.mail || null,
-                    familyName,
-                    givenName,
-                },
-            });
-    } catch (e) {
-        console.error("Failed to sync user to DB:", e);
-    }
+            },
+        })
+        .returning({ id: ldapInfo.id }); // ← get the DB id back
 
     await setUserSession(event, {
         user: {
+            id: dbUser.id, // ← include it in the session
             login: user.cn || username,
             email: user.mail || null,
             name: displayName,
