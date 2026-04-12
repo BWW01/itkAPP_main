@@ -35,33 +35,42 @@ export default defineNuxtConfig({
     pwa: {
         registerType: "autoUpdate",
         manifest: {
-            name: "My PWA",
-            short_name: "PWA",
+            name: "ITK App",
+            short_name: "ITKApp",
             theme_color: "#ffffff",
+            background_color: "#ffffff",
+            display: "standalone",
+            orientation: "portrait",
+            scope: "/",
+            start_url: "/",
+            icons: [
+                {
+                    src: "/icon-192.png",
+                    sizes: "192x192",
+                    type: "image/png",
+                },
+                {
+                    src: "/icon-512.png",
+                    sizes: "512x512",
+                    type: "image/png",
+                },
+                {
+                    src: "/icon-512.png",
+                    sizes: "512x512",
+                    type: "image/png",
+                    purpose: "maskable",
+                },
+            ],
         },
         workbox: {
             navigateFallback: "/",
         },
         devOptions: {
-            enabled: true, // enables PWA in dev mode
+            enabled: true,
         },
         strategies: "injectManifest",
         srcDir: ".",
         filename: "sw-push.ts",
-    },
-    components: [{ path: "~/components", pathPrefix: false }],
-    shadcn: {
-        prefix: "",
-        componentDir: "@/components/ui",
-    },
-    nitro: {
-        externals: {
-            external: ["sharp"],
-            inline: ["ipx", "ofetch"],
-        },
-    },
-    image: {
-        provider: "ipx",
     },
 
 }satisfies NuxtConfig);
