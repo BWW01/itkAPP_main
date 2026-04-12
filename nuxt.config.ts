@@ -17,10 +17,10 @@ export default defineNuxtConfig({
         dirs: ["composables/**", "utils/**", "stores/**"],
     },
     runtimeConfig: {
-        vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
-        vapidMailto: process.env.VAPID_MAILTO,
+        vapidPrivateKey: "",   // set via NUXT_VAPID_PRIVATE_KEY
+        vapidMailto: "",       // set via NUXT_VAPID_MAILTO
         public: {
-            vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+            vapidPublicKey: "", // set via NUXT_PUBLIC_VAPID_PUBLIC_KEY
         },
     },
 
