@@ -20,6 +20,14 @@ const onboardingSteps = [
         route: "/calendar",
     },
     {
+      id: "pushtest",
+      title: "pushtest",
+      description: "pushtest",
+      icon: Calendar,
+      action: "pushtest",
+      route: "/test-push",
+    },
+    {
         id: "profile",
         title: "Profil befejezése",
         description: "Add meg tanulási preferenciáidat és értesítési beállításaidat",
