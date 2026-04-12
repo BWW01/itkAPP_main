@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
     const session = await getUserSession(event);
-
+    console.log("session:", JSON.stringify(session));
     if (!session?.user) {
         throw createError({ statusCode: 401, message: "Unauthorized" });
     }
