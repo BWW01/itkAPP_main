@@ -6,9 +6,11 @@ export default defineEventHandler(async (event) => {
         const body = await readBody<{ username: string; links: string[] }>(event);
 
         if (!body?.username) {
-            throw createError({ statusCode: 400, message: "Username is missing" });
+            throw createError({ statusCode: 400, message: "No user" });
         }
-
+        if(!body.links){
+            throw createError({ statusCode: 400, message: "No links" });
+        }
         const result = await upsertLinks(body.username, body.links || []);
 
         return { status: "success", data: result };
@@ -17,7 +19,7 @@ export default defineEventHandler(async (event) => {
         throw createError({
             statusCode: 500,
             statusMessage: e.message,
-            data: { stack: e.stack }, // add this
+            data: { stack: e.stack },
         });
     }
 });
