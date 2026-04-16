@@ -5,6 +5,7 @@ import {
     timestamp,
     integer,
     uniqueIndex,
+    boolean,
 } from "drizzle-orm/pg-core";
 
 export const ldapInfo = pgTable("LdapInfo", {
@@ -16,17 +17,6 @@ export const ldapInfo = pgTable("LdapInfo", {
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const passwordlessCred = pgTable("PasswordlessCred", {
-    id: serial("id").primaryKey(),
-    externalId: text("externalId").notNull().unique(),
-    userId: integer("userId")
-        .notNull()
-        .references(() => ldapInfo.id),
-    publicKey: text("publicKey").notNull(),
-    algorithm: text("algorithm").notNull(),
-    counter: integer("counter").notNull(),
-});
-
 export const associations = pgTable("Associations", {
     id: serial("id").primaryKey(),
     ldapUsername: text("ldapUsername")
@@ -34,6 +24,7 @@ export const associations = pgTable("Associations", {
         .unique()
         .references(() => ldapInfo.ldapUsername),
     links: text("links").array().notNull().default([]),
+    onboardingDone: boolean("onboardingDone").notNull().default(false),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -51,3 +42,14 @@ export const pushSubscriptions = pgTable(
     },
     (table) => [uniqueIndex("endpoint_idx").on(table.endpoint)]
 );
+
+export const settings = pgTable("Settings", {
+    id: serial("id").primaryKey(),
+    userId: integer("userId")
+        .notNull()
+        .unique()
+        .references(() => ldapInfo.id, { onDelete: "cascade" }),
+    language: text("language").notNull(),
+    notificationTime: integer("notificationTime").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
