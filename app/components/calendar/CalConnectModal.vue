@@ -2,6 +2,7 @@
 import {ref} from 'vue'
 import {Link, Check, AlertCircle, RefreshCw} from "lucide-vue-next"
 import type {SaveStatus} from "@/types/ui";
+import { computed } from 'vue'
 
 const props = defineProps<{ username: string }>()
 const emit = defineEmits<{ saved: [] }>()
@@ -10,19 +11,49 @@ const open = defineModel<boolean>('open')
 
 const moodleLink = ref('')
 const neptunLink = ref('')
+const extras = ref([])
 const saveStatus = ref<SaveStatus>('idle')
 const saveError = ref('')
+
+// Validity check for URLs
+const isValidUrl = (url: string) => {
+    if (!url) return true; // Empty fields are fine for clearing the db entries.
+    return url.startsWith('http://') || url.startsWith('https://');
+}
+
+// Computed cansave for button state
+const canSave = computed(() => {
+    return isValidUrl(moodleLink.value.trim()) && moodleLink.value.trim() !== ''
+        && isValidUrl(neptunLink.value.trim()) && neptunLink.value.trim() !== ''
+        && saveStatus.value !== 'idle'
+});
+
+// Fill in the already present links from the db
+watch(open, async (isOpen) => {
+    if (isOpen && props.username) {
+        try {
+            // getCalLinks.get.ts
+            const data = await $fetch(`/api/calendar/getCalLinks?username=${props.username}`)
+            if (data) {
+                moodleLink.value = data.moodleLink?.url || '';
+                neptunLink.value = data.neptuneLink?.url || '';
+            }
+        } catch (e) {
+            console.error("Nem sikerült betölteni a meglévő linkeket: ", e)
+        }
+    }
+})
 
 async function save() {
     saveStatus.value = 'saving'
     saveError.value = ''
-    const links = [moodleLink.value, neptunLink.value]
-        .map(l => l.trim())
-        .filter(l => l !== '')
+    const parsedMoodleLink = moodleLink.value.trim() || null
+    const parsedNeptunLink = neptunLink.value.trim() || null
+
     try {
         await $fetch('/api/calendar/importCalLinks', {
             method: 'POST',
-            body: {username: props.username, links}
+            body: {username: props.username, neptuneLink: parsedNeptunLink, moodleLink: parsedMoodleLink, extras: []}
         })
         saveStatus.value = 'success'
         emit('saved')
@@ -99,7 +130,7 @@ async function save() {
             <DialogFooter>
                 <Button
                     class="w-full"
-                    :disabled="saveStatus === 'saving' || saveStatus === 'success'"
+                    :disabled="canSave"
                     @click="save"
                 >
                     <Check v-if="saveStatus === 'success'" class="w-4 h-4"/>

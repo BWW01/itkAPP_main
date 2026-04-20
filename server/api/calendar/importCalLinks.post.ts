@@ -1,13 +1,24 @@
 import { upsertLinks } from "../../utils/mergeIcs";
 import type { CalendarLink } from "../../db/schema";
 
+// Validation on the backend as well
+function validateUrl(urlString: string | null | undefined): string | null {
+    if (!urlString || urlString.trim() === "") return null;
+    try {
+        new URL(urlString.trim());
+        return urlString.trim();
+    } catch {
+        throw createError({ statusCode: 400, message: "Érvénytelen URL formátum!" });
+    }
+}
+
 export default defineEventHandler(async (event) => {
     try {
         assertMethod(event, "POST");
         const body = await readBody<{
             username: string;
-            neptuneLink?: CalendarLink | null;
-            moodleLink?: CalendarLink | null;
+            neptuneLink?: string | null;
+            moodleLink?: string | null;
             extras?: CalendarLink[];
         }>(event);
 
@@ -15,10 +26,13 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 400, message: "No user" });
         }
 
+        const safeNeptunUrl = validateUrl(body.neptuneLink);
+        const safeMoodleUrl = validateUrl(body.moodleLink);
+
         const result = await upsertLinks(body.username, {
-            neptuneLink: body.neptuneLink,
-            moodleLink: body.moodleLink,
-            extras: body.extras,
+            neptuneLink: safeNeptunUrl ? { url: safeNeptunUrl, syncInterval: "1d" } as CalendarLink : null,
+            moodleLink: safeMoodleUrl ? { url: safeMoodleUrl, syncInterval: "1d" } as CalendarLink : null,
+            extras: body.extras || [],
         });
 
         return { status: "success", data: result };
