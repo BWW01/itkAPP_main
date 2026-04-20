@@ -1,15 +1,16 @@
-import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import {createHash} from "node:crypto";
+import {mkdir, readFile, writeFile} from "node:fs/promises";
 import path from "node:path";
-import { eq } from "drizzle-orm";
-import { db } from "../db";
-import { associations, ldapInfo, type CalendarLink } from "../db/schema";
+import {eq} from "drizzle-orm";
+import {db} from "../db";
+import {associations, ldapInfo} from "../db/schema";
+import type {CalendarLink} from "#shared/types/calendar";
 
 const CALENDARS_DIR = process.env.CALENDARS_DIR || "/data/calendars";
 
 export async function fetchIcs(url: string): Promise<string | null> {
     try {
-        const res = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+        const res = await fetch(url, {signal: AbortSignal.timeout(30_000)});
         if (!res.ok) {
             console.error(`Failed to fetch ${url}: ${res.status}`);
             return null;
@@ -102,7 +103,7 @@ export async function syncUserCalendar(
     const sources: string[] = [];
     const now = new Date();
     const updates: Partial<typeof associations.$inferInsert> = {};
-    const extrasLastSynced = { ...(assoc.extrasLastSyncedAt || {}) };
+    const extrasLastSynced = {...(assoc.extrasLastSyncedAt || {})};
 
     // Neptune
     if (assoc.neptuneLink?.url) {
@@ -142,7 +143,7 @@ export async function syncUserCalendar(
 
     // If no sources were fetched this run, but file exists, nothing to do.
     if (sources.length === 0) {
-        return { changed: false, userId: user.id };
+        return {changed: false, userId: user.id};
     }
 
     // For proper merge we need *all* current sources, not just the ones we
@@ -180,7 +181,7 @@ export async function syncUserCalendar(
     let changed = false;
     if (newHash !== assoc.mergedCalendarHash) {
         const userDir = path.join(CALENDARS_DIR, String(user.id));
-        await mkdir(userDir, { recursive: true });
+        await mkdir(userDir, {recursive: true});
         const filePath = path.join(userDir, "calendar.ics");
         await writeFile(filePath, merged, "utf-8");
         updates.mergedCalendarHash = newHash;
@@ -194,7 +195,7 @@ export async function syncUserCalendar(
         .set(updates)
         .where(eq(associations.ldapUsername, ldapUsername));
 
-    return { changed, userId: user.id };
+    return {changed, userId: user.id};
 }
 
 /**
@@ -218,7 +219,7 @@ export async function getMergedCalendar(
         return await readFile(filePath, "utf-8");
     } catch {
         // File not yet generated: trigger a sync
-        await syncUserCalendar(ldapUsername, { forceAll: true });
+        await syncUserCalendar(ldapUsername, {forceAll: true});
         try {
             const filePath = path.join(
                 CALENDARS_DIR,
@@ -252,9 +253,10 @@ export async function upsertLinks(
         await db
             .update(associations)
             .set({
-                neptuneLink: payload.neptuneLink ?? existing.neptuneLink,
-                moodleLink: payload.moodleLink ?? existing.moodleLink,
-                extras: payload.extras ?? existing.extras,
+                // Use undefined instead of null coalescing, so null can override existing values (for deletions).
+                neptuneLink: payload.neptuneLink !== undefined ? payload.neptuneLink : existing.neptuneLink,
+                moodleLink: payload.moodleLink !== undefined ? payload.moodleLink : existing.moodleLink,
+                extras: payload.extras !== undefined ? payload.extras : existing.extras,
             })
             .where(eq(associations.ldapUsername, ldapUsername));
     } else {
@@ -267,7 +269,7 @@ export async function upsertLinks(
     }
 
     // Trigger an initial sync
-    await syncUserCalendar(ldapUsername, { forceAll: true });
+    await syncUserCalendar(ldapUsername, {forceAll: true});
 
-    return { ldapUsername, synced: true };
+    return {ldapUsername, synced: true};
 }

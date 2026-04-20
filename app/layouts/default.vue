@@ -29,7 +29,7 @@ async function logout() {
     <!-- NO MIN-H-SCREEN -->
     <div class="h-screen bg-background flex flex-col">
         <!-- Top Bar -->
-        <header class="sticky top-0 z-40 border-b border-border bg-card">
+        <header class="hidden md:flex sticky top-0 z-40 border-b border-border bg-card">
             <div class="flex h-14 items-center gap-6 px-6">
 
                 <!-- Logo -->
@@ -112,5 +112,19 @@ async function logout() {
         <main class="flex-1 flex flex-col overflow-hidden">
             <slot/>
         </main>
+
+        <!-- Mobile bottom nav — show only on mobile -->
+        <nav class="md:hidden flex bg-card">
+            <NuxtLink
+                v-for="item in navItems"
+                :key="item.to"
+                :to="item.to"
+                class="flex-1 flex flex-col items-center py-3 gap-1 text-[10px] font-semibold text-muted-foreground"
+                active-class="text-primary"
+            >
+                <component :is="item.icon" class="h-5 w-5"/>
+                {{ item.label }}
+            </NuxtLink>
+        </nav>
     </div>
 </template>

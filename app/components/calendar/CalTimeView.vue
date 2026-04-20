@@ -92,7 +92,7 @@ function getLayoutedEvents(date: Date) {
 </script>
 
 <template>
-    <div class="flex-1 bg-card overflow-hidden rounded-md relative">
+    <div class="flex-1 bg-card overflow-hidden rounded-xl relative">
         <div class="h-full overflow-y-auto">
 
             <!-- Sticky header -->
@@ -108,7 +108,7 @@ function getLayoutedEvents(date: Date) {
                         }}
                     </span>
                     <span :class="[
-                        'w-7 h-7 inline-flex items-center justify-center text-xs font-bold rounded-full',
+                        'w-5 md:w-8 h-5 inline-flex items-center justify-center text-xs font-bold rounded-full',
                         isToday(date) ? 'bg-primary text-primary-foreground' : 'text-foreground'
                     ]">
                         {{ date.getDate() }}

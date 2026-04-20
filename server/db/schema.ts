@@ -1,13 +1,5 @@
-import {
-    pgTable,
-    serial,
-    text,
-    timestamp,
-    integer,
-    uniqueIndex,
-    boolean,
-    jsonb,
-} from "drizzle-orm/pg-core";
+import {boolean, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex,} from "drizzle-orm/pg-core";
+import type {CalendarLink} from "#shared/types/calendar";
 
 export const ldapInfo = pgTable("LdapInfo", {
     id: serial("id").primaryKey(),
@@ -17,11 +9,6 @@ export const ldapInfo = pgTable("LdapInfo", {
     givenName: text("givenName").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
-
-export type CalendarLink = {
-    url: string;
-    syncInterval: string; // e.g. "6h", "1d", "30m"
-};
 
 export const associations = pgTable("Associations", {
     id: serial("id").primaryKey(),
@@ -49,7 +36,7 @@ export const pushSubscriptions = pgTable(
         id: serial("id").primaryKey(),
         userId: integer("userId")
             .notNull()
-            .references(() => ldapInfo.id, { onDelete: "cascade" }),
+            .references(() => ldapInfo.id, {onDelete: "cascade"}),
         endpoint: text("endpoint").notNull(),
         p256dh: text("p256dh").notNull(),
         auth: text("auth").notNull(),
@@ -63,7 +50,7 @@ export const settings = pgTable("Settings", {
     userId: integer("userId")
         .notNull()
         .unique()
-        .references(() => ldapInfo.id, { onDelete: "cascade" }),
+        .references(() => ldapInfo.id, {onDelete: "cascade"}),
     language: text("language").notNull(),
     notificationTime: integer("notificationTime").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),

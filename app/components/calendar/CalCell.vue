@@ -13,14 +13,14 @@ defineProps<{
 
 <template>
     <div :class="[
-        'relative border-r border-b border-border p-2 transition-colors group overflow-hidden',
+        'relative border-r border-b border-border p-0 transition-colors group overflow-hidden flex justify-center pt-1',
         !current ? 'bg-stripes' : 'bg-card hover:bg-muted/20',
         isLastCol ? 'border-r-0' : '',
         isLastRow ? 'border-b-0' : '',
     ]">
         <!-- Day number -->
         <span :class="[
-            'w-6 h-6 inline-flex items-center justify-center text-xs font-bold rounded-full transition-colors',
+            'w-5 md:w-8 h-5 inline-flex items-center justify-center text-xs font-bold rounded-full transition-colors',
             isToday
                 ? 'bg-primary text-primary-foreground'
                 : current
@@ -31,7 +31,7 @@ defineProps<{
         </span>
 
         <!-- Events -->
-        <div class="absolute inset-x-1.5 top-8 bottom-1.5 overflow-y-auto flex flex-col gap-1">
+        <div class="absolute inset-x-0 md:inset-x-1.5 top-8 bottom-1.5 overflow-y-auto flex flex-col gap-1">
             <CalEventPopover v-for="event in events" :key="event.id" :event="event"/>
         </div>
     </div>

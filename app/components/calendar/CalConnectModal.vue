@@ -2,7 +2,8 @@
 import {ref} from 'vue'
 import {Link, Check, AlertCircle, RefreshCw} from "lucide-vue-next"
 import type {SaveStatus} from "@/types/ui";
-import { computed } from 'vue'
+import {computed} from 'vue'
+import type {CalendarLink} from '#shared/types/calendar'
 
 const props = defineProps<{ username: string }>()
 const emit = defineEmits<{ saved: [] }>()
@@ -11,7 +12,6 @@ const open = defineModel<boolean>('open')
 
 const moodleLink = ref('')
 const neptunLink = ref('')
-const extras = ref([])
 const saveStatus = ref<SaveStatus>('idle')
 const saveError = ref('')
 
@@ -23,9 +23,11 @@ const isValidUrl = (url: string) => {
 
 // Computed cansave for button state
 const canSave = computed(() => {
-    return isValidUrl(moodleLink.value.trim()) && moodleLink.value.trim() !== ''
-        && isValidUrl(neptunLink.value.trim()) && neptunLink.value.trim() !== ''
-        && saveStatus.value !== 'idle'
+    const isMoodleValid = isValidUrl(moodleLink.value.trim());
+    const isNeptunValid = isValidUrl(neptunLink.value.trim());
+
+    // We can save, if something is entered, all the links are valid, and are not saving currently
+    return isMoodleValid && isNeptunValid && saveStatus.value === 'idle';
 });
 
 // Fill in the already present links from the db
@@ -33,7 +35,9 @@ watch(open, async (isOpen) => {
     if (isOpen && props.username) {
         try {
             // getCalLinks.get.ts
-            const data = await $fetch(`/api/calendar/getCalLinks?username=${props.username}`)
+            const data = await $fetch<{ moodleLink: CalendarLink | null, neptuneLink: CalendarLink | null }>(
+                `/api/calendar/getCalLinks?username=${props.username}`
+            )
             if (data) {
                 moodleLink.value = data.moodleLink?.url || '';
                 neptunLink.value = data.neptuneLink?.url || '';
@@ -129,8 +133,8 @@ async function save() {
 
             <DialogFooter>
                 <Button
-                    class="w-full"
-                    :disabled="canSave"
+                    class="w-full transition-all duration-300"
+                    :disabled="!canSave"
                     @click="save"
                 >
                     <Check v-if="saveStatus === 'success'" class="w-4 h-4"/>

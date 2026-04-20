@@ -123,7 +123,7 @@ const showConnectModal = ref(false)
             @view-change="view = $event"
         />
 
-        <div class="flex-1 min-h-0 flex overflow-hidden p-4 gap-4">
+        <div class="flex-1 min-h-0 flex overflow-hidden p-2 md:p-4 gap-4">
 
             <CalMonthView
                 v-if="view === 'month'"
