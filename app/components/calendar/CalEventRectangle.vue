@@ -29,16 +29,16 @@ const eventStyle = computed(() => ({
         <PopoverTrigger as-child>
             <div :key="props.event.id"
                  :class="[
-                        'absolute z-10 overflow-hidden cursor-pointer hover:opacity-90 p-2 gap-0 rounded-sm duration-300 transition-all hover:-translate-y-2',
+                        'absolute z-10 overflow-hidden cursor-pointer hover:opacity-90 p-1.5 md:p-2 gap-0 rounded-sm duration-300 transition-all hover:-translate-y-2',
                         eventColor(event.color)
                     ]"
                  :style="eventStyle"
             >
-                <div class="flex flex-row gap-2 p-0 truncate h-full">
+                <div class="flex flex-row gap-2 p-0 h-full">
                     <!-- Colored left bar -->
                     <div :class="['hidden md:flex w-1 rounded-full shrink-0', eventColor(event.color, 'dot')]"/>
 
-                    <div class="flex flex-col truncate">
+                    <div class="hidden md:flex flex-col truncate">
                         <!-- Single line when very cramped -->
                         <div v-if="eventHeight(props.event) < 40" class="flex items-center gap-1 truncate">
                             <span class="font-semibold text-xs opacity-70 shrink-0">{{ props.event.time }}</span>
@@ -57,6 +57,11 @@ const eventStyle = computed(() => ({
                             <span class="font-bold truncate text-sm">{{ props.event.title }}</span>
                             <p v-if="props.event.location" class="text-[11px] truncate">{{ props.event.location }}</p>
                         </template>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="flex flex-col md:hidden gap-1 wrap-break-word min-w-0 overflow-hidden">
+                        <span class="font-bold text-[10px]">{{ props.event.title }}</span>
                     </div>
                 </div>
             </div>

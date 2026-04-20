@@ -23,7 +23,7 @@ const DAY_LABELS_SHORT = computed(() => locale.value === 'hu'
 )
 const hours = Array.from({length: 24}, (_, i) => i)
 
-const gridStyle = computed(() => `grid-template-columns: 48px repeat(${props.days}, 1fr)`)
+const gridStyle = computed(() => `grid-template-columns: 45px repeat(${props.days}, 1fr)`)
 
 const visibleDays = computed(() => {
     const date = new Date(props.currentDate)
@@ -126,11 +126,11 @@ function getLayoutedEvents(date: Date) {
             <div class="grid" :style="gridStyle">
 
                 <!-- Hour labels -->
-                <div class="border-r border-border">
+                <div class="border-r border-border w-[45px]">
                     <div v-for="hour in hours" :key="hour"
                          :style="`height: ${HOUR_HEIGHT}px`"
                          class="border-b border-border/40 flex items-start justify-end pr-2 pt-0.5">
-                        <span class="text-[10px] text-muted-foreground font-medium">
+                        <span class="text-xs md:text-sm text-muted-foreground font-medium">
                             {{ hour === 0 ? '' : `${hour}:00` }}
                         </span>
                     </div>

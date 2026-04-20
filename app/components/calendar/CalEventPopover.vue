@@ -12,11 +12,15 @@ const {eventColor} = useEventColor()
     <Popover>
         <PopoverTrigger as-child>
             <div :class="[
-                'flex items-center gap-1 px-1.5 py-1 rounded-lg cursor-pointer transition-all text-[10px] font-semibold truncate shrink-0',
+                'flex items-center gap-1 px-0.5 md:px-1.5 cursor-pointer text-[10px] font-semibold truncate shrink-0 hover:opacity-90 rounded-sm duration-300 transition-all h-4 md:h-7',
                 eventColor(props.event.color, 'bg')
             ]">
-                <div :class="['w-1.5 h-1.5 rounded-full shrink-0', eventColor(props.event.color, 'dot')]"/>
-                <span class="truncate">{{ props.event.title }}</span>
+                <div class="flex items-center gap-1 truncate">
+                    <span class="font-bold text-[10px] md:text-xs truncate">{{ props.event.title }}</span>
+                    <span class="hidden 2xl:flex font-semibold text-xs opacity-70 shrink-0">{{
+                            props.event.time
+                        }}</span>
+                </div>
             </div>
         </PopoverTrigger>
 
