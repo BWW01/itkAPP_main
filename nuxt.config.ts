@@ -96,7 +96,7 @@ export default defineNuxtConfig({
     // Nitro Server
     nitro: {
         externals: {
-            external: ["sharp"],
+            external: ["sharp", "events"],
             inline: ["ipx", "ofetch"],
         },
     },
