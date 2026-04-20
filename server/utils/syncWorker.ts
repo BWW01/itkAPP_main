@@ -1,14 +1,12 @@
-import cron from "node-cron";
+import { Cron } from "croner";
+import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { associations, ldapInfo } from "../db/schema";
 import { isDue } from "./interval";
 import { syncUserCalendar } from "./mergeIcs";
 
-const STAGGER_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+const STAGGER_WINDOW_MS = 30 * 60 * 1000;
 
-/**
- * Deterministic offset per user within the 30-minute window.
- */
 function getUserOffset(userId: number): number {
     return (userId * 60_000) % STAGGER_WINDOW_MS;
 }
@@ -57,25 +55,6 @@ async function runUserSyncIfDue(ldapUsername: string) {
     }
 }
 
-// Import eq at top
-import { eq } from "drizzle-orm";
-
-/**
- * Every 30 min, fetch all users and schedule individual timeouts within
- * that window, staggered by userId.
- */
-export function startSyncWorker() {
-    console.log("[sync] worker started");
-
-    // Run once on startup (staggered)
-    scheduleWindow();
-
-    // Then every 30 minutes
-    cron.schedule("*/30 * * * *", () => {
-        scheduleWindow();
-    });
-}
-
 async function scheduleWindow() {
     try {
         const users = await db
@@ -95,8 +74,20 @@ async function scheduleWindow() {
             }, offset);
         }
 
-        console.log(`[sync] scheduled ${users.length} users in this window`);
+        console.log(`[sync] scheduled ${users.length} users`);
     } catch (e) {
         console.error("[sync] scheduling error:", e);
     }
+}
+
+export function startSyncWorker() {
+    console.log("[sync] worker started");
+
+    // Run once on startup
+    scheduleWindow();
+
+    // Every 30 minutes
+    new Cron("*/30 * * * *", () => {
+        scheduleWindow();
+    });
 }
