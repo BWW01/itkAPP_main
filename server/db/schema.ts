@@ -6,6 +6,7 @@ import {
     integer,
     uniqueIndex,
     boolean,
+    jsonb,
 } from "drizzle-orm/pg-core";
 
 export const ldapInfo = pgTable("LdapInfo", {
@@ -17,13 +18,27 @@ export const ldapInfo = pgTable("LdapInfo", {
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export type CalendarLink = {
+    url: string;
+    syncInterval: string; // e.g. "6h", "1d", "30m"
+};
+
 export const associations = pgTable("Associations", {
     id: serial("id").primaryKey(),
     ldapUsername: text("ldapUsername")
         .notNull()
         .unique()
         .references(() => ldapInfo.ldapUsername),
-    links: text("links").array().notNull().default([]),
+    neptuneLink: jsonb("neptuneLink").$type<CalendarLink | null>(),
+    moodleLink: jsonb("moodleLink").$type<CalendarLink | null>(),
+    extras: jsonb("extras").$type<CalendarLink[]>().notNull().default([]),
+    mergedCalendarHash: text("mergedCalendarHash"),
+    neptuneLastSyncedAt: timestamp("neptuneLastSyncedAt"),
+    moodleLastSyncedAt: timestamp("moodleLastSyncedAt"),
+    extrasLastSyncedAt: jsonb("extrasLastSyncedAt")
+        .$type<Record<string, string>>()
+        .notNull()
+        .default({}),
     onboardingDone: boolean("onboardingDone").notNull().default(false),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
