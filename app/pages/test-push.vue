@@ -2,7 +2,7 @@
 <template>
   <client-only>
     <div class="max-w-xl mx-auto p-6 space-y-6">
-      <h1 class="text-2xl font-bold">🔔 Push Notification Teszt</h1>
+      <h1 class="text-2xl font-bold">🔔 Push Notification & Naptár Teszt</h1>
 
       <!-- Támogatottság -->
       <div class="rounded-lg border p-4 space-y-1">
@@ -82,6 +82,21 @@
         </button>
       </div>
 
+      <!-- ÚJ: Naptár szinkronizálás -->
+      <div class="rounded-lg border p-4 space-y-3">
+        <h2 class="font-semibold">📅 Naptár szinkronizálása</h2>
+        <p class="text-sm text-gray-500">
+          Azonnali frissítés kikényszerítése a Neptun és Moodle naptárakból.
+        </p>
+        <button
+            :disabled="!!loading"
+            class="w-full px-4 py-2 rounded-lg font-medium text-sm bg-green-600 text-white hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            @click="handleSyncCalendar"
+        >
+          {{ loading === "sync" ? "Szinkronizálás folyamatban..." : "Naptár frissítése most" }}
+        </button>
+      </div>
+
       <!-- Log -->
       <div class="rounded-lg border p-4 space-y-2">
         <div class="flex items-center justify-between">
@@ -114,17 +129,19 @@
 </template>
 
 <script setup lang="ts">
-const { isSupported, permission, subscribe, unsubscribe } =
-    usePushNotifications();
+import { ref, reactive, onMounted } from 'vue';
+
+// Lekérjük a felhasználó session adatait
+const { user } = useUserSession();
+const { isSupported, permission, subscribe, unsubscribe } = usePushNotifications();
 
 const isSubscribed = ref(false);
-const loading = ref<"subscribe" | "unsubscribe" | "send" | null>(null);
+// Kibővítettük a loading típusát a "sync" állapottal
+const loading = ref<"subscribe" | "unsubscribe" | "send" | "sync" | null>(null);
 
 const form = reactive({ title: "", body: "", url: "/" });
 
-const logs = ref<{ time: string; message: string; type: "info" | "error" }[]>(
-    []
-);
+const logs = ref<{ time: string; message: string; type: "info" | "error" }[]>([]);
 
 function addLog(message: string, type: "info" | "error" = "info") {
   logs.value.unshift({
@@ -201,6 +218,34 @@ async function handleSendCustom() {
     addLog(`Egyedi értesítés elküldve: "${form.title || "Hello!"}" ✓`);
   } catch (e: any) {
     addLog(`Hiba: ${e?.message ?? e}`, "error");
+  } finally {
+    loading.value = null;
+  }
+}
+
+// ÚJ: Szinkronizáció kezelése
+async function handleSyncCalendar() {
+  // Bejelentkezés ellenőrzése
+  if (!user.value?.login) {
+    addLog("Hiba: Nem vagy bejelentkezve, így nem lehet szinkronizálni!", "error");
+    return;
+  }
+
+  loading.value = "sync";
+  try {
+    const response = await $fetch("/api/calendar/sync", {
+      method: "POST",
+      body: {
+        username: user.value.login,
+      },
+    });
+
+    // Siker esetén beírjuk a backend válaszát a logba
+    addLog(`Szinkronizálás: ${response.message} ✓`);
+  } catch (e: any) {
+    // Hiba esetén a backend által küldött üzenetet vagy a hibaüzenetet írjuk ki
+    const errorMessage = e?.data?.statusMessage || e?.message || "Ismeretlen hiba";
+    addLog(`Szinkronizálási hiba: ${errorMessage}`, "error");
   } finally {
     loading.value = null;
   }

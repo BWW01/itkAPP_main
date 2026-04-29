@@ -4,6 +4,7 @@ import { db } from "../db";
 import { associations, ldapInfo } from "../db/schema";
 import { isDue } from "./interval";
 import { syncUserCalendar } from "./mergeIcs";
+import { checkAndSendNotifications } from "./notifications";
 
 const STAGGER_WINDOW_MS = 30 * 60 * 1000;
 
@@ -83,11 +84,15 @@ async function scheduleWindow() {
 export function startSyncWorker() {
     console.log("[sync] worker started");
 
-    // Run once on startup
     scheduleWindow();
 
-    // Every 30 minutes
     new Cron("*/30 * * * *", () => {
         scheduleWindow();
+    });
+
+    new Cron("* * * * *", () => {
+        checkAndSendNotifications().catch((e) =>
+            console.error("[push] Értesítés küldési hiba:", e)
+        );
     });
 }

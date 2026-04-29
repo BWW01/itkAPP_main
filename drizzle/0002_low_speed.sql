@@ -9,6 +9,9 @@ CREATE TABLE "Settings" (
 --> statement-breakpoint
 DROP TABLE "PasswordlessCred" CASCADE;--> statement-breakpoint
 ALTER TABLE "Associations" RENAME COLUMN "links" TO "neptuneLink";--> statement-breakpoint
+ALTER TABLE "Associations" ALTER COLUMN "neptuneLink" DROP DEFAULT;--> statement-breakpoint
+ALTER TABLE "Associations" ALTER COLUMN "neptuneLink" DROP NOT NULL;--> statement-breakpoint
+ALTER TABLE "Associations" ALTER COLUMN "neptuneLink" TYPE jsonb USING null;--> statement-breakpoint
 ALTER TABLE "Associations" ADD COLUMN "moodleLink" jsonb;--> statement-breakpoint
 ALTER TABLE "Associations" ADD COLUMN "extras" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
 ALTER TABLE "Associations" ADD COLUMN "mergedCalendarHash" text;--> statement-breakpoint
