@@ -9,13 +9,10 @@ import { settings, pushSubscriptions } from "../db/schema";
 const CALENDARS_DIR = process.env.CALENDARS_DIR || "/data/calendars";
 
 export async function checkAndSendNotifications() {
-    // Web-push beállítása a környezeti változók alapján
-    // (Mivel ez worker, előfordulhat, hogy a useRuntimeConfig() nem elérhető,
-    // így érdemes a process.env-ből beolvasni a kulcsokat)
     webpush.setVapidDetails(
-        process.env.VAPID_MAILTO!,
-        process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY!,
-        process.env.VAPID_PRIVATE_KEY!
+        process.env.NUXT_VAPID_MAILTO,
+        process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY,
+        process.env.NUXT_VAPID_PRIVATE_KEY
     );
 
     // 1. Lekérjük azokat a felhasználókat, akiknek van beállítva értesítési ideje
