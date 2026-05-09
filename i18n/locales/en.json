@@ -3,7 +3,8 @@
     "calendar": "Calendar",
     "dashboard": "Dashboard",
     "profile": "Profile",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout"
   },
   "calendar": {
     "today": "Today",
@@ -57,5 +58,55 @@
       "details": "Details",
       "open": "Open"
     }
+  },
+  "profile": {
+    "account": "Account",
+    "username": "Username",
+    "email": "Email",
+    "login": "Sign-in",
+    "loginMethod": "Shibboleth",
+    "calendarLinks": "Calendar connections",
+    "calendarLinksDesc": "Neptun and Moodle iCal links",
+    "neptunLabel": "Neptun iCal link",
+    "moodleLabel": "Moodle iCal link",
+    "lastSync": "Last synced: {date}",
+    "neverSynced": "Never synced",
+    "push": "Push notifications",
+    "pushDesc": "Get notified before events on this device",
+    "subscribed": "Subscribed",
+    "notSubscribed": "Not subscribed",
+    "pushNotSupported": "Not supported on this device",
+    "pushDenied": "Permission denied in browser settings",
+    "pushActive": "This device will receive notifications",
+    "pushInactive": "Subscribe to receive notifications",
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "pushError": "Permission denied or not supported."
+  },
+  "greeting": {
+    "night": "Good night",
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "dashboard": {
+    "noCalendar": "No calendar connected yet",
+    "noCalendarDesc": "Connect your Neptun or Moodle calendar to see your events",
+    "connectCalendar": "Connect calendar",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "daysUntil": "In {n} days",
+    "daysUntilShort": "{n}d",
+    "urgent": "Next 7 days",
+    "next": "Next event",
+    "upcoming": "Upcoming events",
+    "noEvents": "No upcoming events",
+    "noEventsDesc": "Your calendar is empty or not yet synced",
+    "openCalendar": "Open calendar",
+    "quickLinks": "Quick links",
+    "statToday": "Today",
+    "statExam": "Exam",
+    "statDeadline": "Deadline",
+    "seeAll": "See all"
   }
 }

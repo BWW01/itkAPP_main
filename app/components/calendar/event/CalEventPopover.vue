@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type {CalendarEvent} from '@/utils/parseIcs'
-import CalEventPopoverContent from "~/components/calendar/CalEventPopoverContent.vue";
+import type {CalendarEvent} from '~/utils/parseIcs'
+import CalEventPopoverContent from "~/components/calendar/event/CalEventPopoverContent.vue";
 
 const props = defineProps<{ event: CalendarEvent }>()
 

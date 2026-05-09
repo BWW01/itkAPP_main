@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {CalendarEvent} from '@/utils/parseIcs'
+import type {CalendarEvent} from '~/utils/parseIcs'
 
 defineProps<{
     day: number | null

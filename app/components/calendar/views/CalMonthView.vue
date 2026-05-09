@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type {DayCell} from "@/types/calendar"
-import type {CalendarEvent} from '@/utils/parseIcs'
+import type {DayCell} from "~/types/calendar"
+import type {CalendarEvent} from '~/utils/parseIcs'
 
 const {locale} = useI18n()
 

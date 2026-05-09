@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type {CalendarEvent} from '@/utils/parseIcs'
-import CalEventRectangle from "~/components/calendar/CalEventRectangle.vue";
+import type {CalendarEvent} from '~/utils/parseIcs'
+import CalEventRectangle from "~/components/calendar/event/CalEventRectangle.vue";
 
 const {locale} = useI18n()
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue'
+import {CalendarPlus} from 'lucide-vue-next'
 import {parseIcsToEvents, type CalendarEvent} from '@/utils/parseIcs'
 import type {CalView, DayCell} from "@/types/calendar";
 
@@ -100,6 +101,7 @@ const upcomingEvents = computed(() => {
 
 // --- Modal ---
 const showConnectModal = ref(false)
+const showBottomSheet = ref(false)
 </script>
 
 <template>
@@ -111,6 +113,12 @@ const showConnectModal = ref(false)
             @saved="loadCalendar"
         />
 
+        <CalBottomSheet
+            v-model:open="showBottomSheet"
+            :username="username"
+            @saved="loadCalendar"
+        />
+
         <CalHeader
             :current-date="currentDate"
             :loading="loading"
@@ -118,10 +126,11 @@ const showConnectModal = ref(false)
             :view="view"
             @previous="navigate('previous')"
             @next="navigate('next')"
-            @goToToday="goToToday"
-            @goToDate="goToDate"
+            @today="goToToday"
             @view-change="view = $event"
         />
+
+        <Fab :icon="CalendarPlus" label="" @click="showBottomSheet = true"/>
 
         <div class="flex-1 min-h-0 flex overflow-hidden p-0 py-4 md:p-4 gap-4">
 

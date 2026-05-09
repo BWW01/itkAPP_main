@@ -3,7 +3,8 @@
     "calendar": "Naptár",
     "dashboard": "Irányítópult",
     "profile": "Profil",
-    "login": "Bejelentkezés"
+    "login": "Bejelentkezés",
+    "logout": "Kijelentkezés"
   },
   "calendar": {
     "today": "Ma",
@@ -57,5 +58,55 @@
       "details": "Részletek",
       "open": "Megnyitás"
     }
+  },
+  "profile": {
+    "account": "Fiók",
+    "username": "Felhasználónév",
+    "email": "E-mail",
+    "login": "Bejelentkezés",
+    "loginMethod": "Shibboleth",
+    "calendarLinks": "Naptár kapcsolatok",
+    "calendarLinksDesc": "Neptun és Moodle iCal linkek",
+    "neptunLabel": "Neptun iCal link",
+    "moodleLabel": "Moodle iCal link",
+    "lastSync": "Utolsó szinkron: {date}",
+    "neverSynced": "Még nem szinkronizált",
+    "push": "Push értesítések",
+    "pushDesc": "Értesítés az események előtt ezen az eszközön",
+    "subscribed": "Feliratkozva",
+    "notSubscribed": "Nincs feliratkozás",
+    "pushNotSupported": "Nem támogatott ezen az eszközön",
+    "pushDenied": "Engedély megtagadva a böngészőben",
+    "pushActive": "Ez az eszköz kap értesítéseket",
+    "pushInactive": "Feliratkozás után értesítést kapsz",
+    "subscribe": "Feliratkozás",
+    "unsubscribe": "Leiratkozás",
+    "pushError": "Az engedély megtagadva vagy nem támogatott."
+  },
+  "greeting": {
+    "night": "Jó éjt",
+    "morning": "Jó reggelt",
+    "afternoon": "Jó napot",
+    "evening": "Jó estét"
+  },
+  "dashboard": {
+    "noCalendar": "Még nincs csatlakoztatott naptár",
+    "noCalendarDesc": "Csatlakoztasd a Neptun vagy Moodle naptárad az eseményeid megjelenítéséhez",
+    "connectCalendar": "Naptár csatlakoztatása",
+    "today": "Ma",
+    "tomorrow": "Holnap",
+    "daysUntil": "{n} nap múlva",
+    "daysUntilShort": "{n}n",
+    "urgent": "Következő 7 nap",
+    "next": "Következő esemény",
+    "upcoming": "Közelgő események",
+    "noEvents": "Nincs közelgő esemény",
+    "noEventsDesc": "A naptárad üres vagy még nincs szinkronizálva",
+    "openCalendar": "Naptár megnyitása",
+    "quickLinks": "Gyors linkek",
+    "statToday": "Ma",
+    "statExam": "Vizsga",
+    "statDeadline": "Határidő",
+    "seeAll": "Összes"
   }
 }

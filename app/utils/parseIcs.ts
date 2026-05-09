@@ -41,7 +41,7 @@ export function parseIcsToEvents(icsString: string): CalendarEvent[] {
         const allDay = event.startDate.isDate
 
         const timeStr = formatTime(start, endDate, allDay)
-        const { color, type } = classifyEvent(title)
+        const {color, type} = classifyEvent(title)
 
         const rawLocation = vevent.getFirstProperty('location')?.toICALString()
         const location = rawLocation
@@ -69,20 +69,27 @@ export function parseIcsToEvents(icsString: string): CalendarEvent[] {
         })
     }
 
-    return events
+    return events.sort((a, b) => {
+        const da = new Date(a.year, a.month, a.date, a.startHour, a.startMinute)
+        const db = new Date(b.year, b.month, b.date, b.startHour, b.startMinute)
+        return da.getTime() - db.getTime()
+    })
 }
 
 function formatTime(start: Date, end?: Date, allDay?: boolean): string {
     if (allDay) return 'Egész nap'
     const fmt = (d: Date) =>
-        d.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })
+        d.toLocaleTimeString('hu-HU', {hour: '2-digit', minute: '2-digit'})
     if (!end || start.getTime() === end.getTime()) return fmt(start)
     return `${fmt(start)} – ${fmt(end)}`
 }
 
 function classifyEvent(title: string): { color: string; type: string } {
     const t = title.toLowerCase()
-    if (t.includes('zh') || t.includes('vizsga') || t.includes('exam')) return { color: 'red', type: 'Vizsga' }
-    if (t.includes('beadandó') || t.includes('határidő') || t.includes('deadline')) return { color: 'blue', type: 'Határidő' }
-    return { color: 'green', type: 'Esemény' }
+    if (t.includes('zh') || t.includes('vizsga') || t.includes('exam')) return {color: 'red', type: 'Vizsga'}
+    if (t.includes('beadandó') || t.includes('határidő') || t.includes('deadline')) return {
+        color: 'blue',
+        type: 'Határidő'
+    }
+    return {color: 'green', type: 'Esemény'}
 }
