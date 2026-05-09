@@ -235,7 +235,8 @@ function cc(color: string) {
                                 <ListGridItem label="Moodle" href="https://moodle.ppke.hu" target="_blank">
                                     <NuxtImg src="/icons/moodle.svg" class="h-6 w-auto"/>
                                 </ListGridItem>
-                                <ListGridItem label="Neptun" href="https://neptun3.ppke.hu" target="_blank">
+                                <ListGridItem label="Neptun" href="https://neptun3.ppke.hu/hallgato_uj/login"
+                                              target="_blank">
                                     <NuxtImg src="/icons/neptun.svg" class="h-6 w-auto"/>
                                 </ListGridItem>
                                 <ListGridItem label="Teams" href="https://teams.microsoft.com" target="_blank">
@@ -247,16 +248,19 @@ function cc(color: string) {
                                 <ListGridItem label="ITK Wiki" href="https://users.itk.ppke.hu/~perpa4" target="_blank">
                                     <NuxtImg src="/icons/itk-wiki.png" class="h-7 w-auto"/>
                                 </ListGridItem>
-                                <ListGridItem label="Zimbra" href="https://zimbra.ppke.hu" target="_blank">
+                                <ListGridItem label="Zimbra" href="https://mail.ppke.hu" target="_blank">
                                     <Mail class="w-6 h-6 text-red-500"/>
                                 </ListGridItem>
-                                <ListGridItem label="T.O." href="https://zimbra.ppke.hu" target="_blank">
+                                <ListGridItem label="T.O." href="https://ppke.sharepoint.com/sites/itk-to"
+                                              target="_blank">
                                     <NuxtImg src="/icons/sharepoint.svg" class="h-7 w-auto"/>
                                 </ListGridItem>
-                                <ListGridItem label="Távoktatás" href="https://zimbra.ppke.hu" target="_blank">
+                                <ListGridItem label="Távoktatás" href="https://tavoktatas.ppke.hu/secure/"
+                                              target="_blank">
                                     <NuxtImg src="/icons/ppke.svg" class="h-7 w-auto"/>
                                 </ListGridItem>
-                                <ListGridItem class="col-span-2" label="Oktatók" href="https://zimbra.ppke.hu"
+                                <ListGridItem class="col-span-2" label="Oktatók"
+                                              href="https://ppke.hu/oktatok/?search=&sort_by=asc"
                                               target="_blank">
                                     <NuxtImg src="/icons/ppke.svg" class="h-7 w-auto"/>
                                 </ListGridItem>
