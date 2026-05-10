@@ -52,6 +52,7 @@ export const settings = pgTable("Settings", {
         .unique()
         .references(() => ldapInfo.id, {onDelete: "cascade"}),
     language: text("language").notNull(),
-    notificationTime: integer("notificationTime").notNull(),
+    // Itt adtuk hozzá a default(15) értéket
+    notificationTime: integer("notificationTime").notNull().default(15),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
