@@ -2,7 +2,7 @@
 import type {DayCell} from "~/types/calendar"
 import type {CalendarEvent} from '~/utils/parseIcs'
 
-const {locale} = useI18n()
+const {t} = useI18n()
 
 const props = defineProps<{
     weeks: DayCell[][]
@@ -14,15 +14,8 @@ const emit = defineEmits<{
     daySelected: [day: number]
 }>()
 
-const DAY_LABELS_FULL = computed(() => locale.value === 'hu'
-    ? ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
-    : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-)
-
-const DAY_LABELS_SHORT = computed(() => locale.value === 'hu'
-    ? ['H', 'K', 'Sz', 'Cs', 'P', 'Szo', 'V']
-    : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-)
+const DAY_LABELS_FULL = computed(() => Array.from({length: 7}, (_, i) => t(`calendar.days.full.${i}`)))
+const DAY_LABELS_SHORT = computed(() => Array.from({length: 7}, (_, i) => t(`calendar.days.short.${i}`)))
 
 function isToday(day: number | null) {
     if (!day) return false

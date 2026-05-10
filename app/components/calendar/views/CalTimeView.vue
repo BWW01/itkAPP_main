@@ -2,7 +2,7 @@
 import type {CalendarEvent} from '~/utils/parseIcs'
 import CalEventRectangle from "~/components/calendar/event/CalEventRectangle.vue";
 
-const {locale} = useI18n()
+const {t} = useI18n()
 
 const props = defineProps<{
     currentDate: Date
@@ -12,15 +12,8 @@ const props = defineProps<{
 
 const HOUR_HEIGHT = 64
 
-const DAY_LABELS_FULL = computed(() => locale.value === 'hu'
-    ? ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap']
-    : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-)
-
-const DAY_LABELS_SHORT = computed(() => locale.value === 'hu'
-    ? ['H', 'K', 'Sze', 'Cs', 'P', 'Szo', 'V']
-    : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-)
+const DAY_LABELS_FULL = computed(() => Array.from({length: 7}, (_, i) => t(`calendar.days.full.${i}`)))
+const DAY_LABELS_SHORT = computed(() => Array.from({length: 7}, (_, i) => t(`calendar.days.short.${i}`)))
 const hours = Array.from({length: 24}, (_, i) => i)
 
 const gridStyle = computed(() => `grid-template-columns: 45px repeat(${props.days}, 1fr)`)

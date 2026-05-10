@@ -1,16 +1,26 @@
 <script setup lang="ts">
-import CalConnectCard from "~/components/calendar/sidebar/CalConnectCard.vue";
+import type {CalendarEvent} from '~/utils/parseIcs'
+import CalConnectCard from '~/components/calendar/sidebar/CalConnectCard.vue'
 
-defineEmits<{
-    openConnectModal: []
-    dateSelected: [date: Date]
+defineProps<{
+    upcomingEvents: CalendarEvent[]
+    loading?: boolean
 }>()
+
+defineEmits<{ openConnectModal: [] }>()
 </script>
 
 <template>
-    <div class="w-72 bg-background shrink-0 hidden lg:flex lg:flex-col gap-4 overflow-y-auto">
+    <div
+        class="w-72 bg-background shrink-0 hidden lg:flex lg:flex-col gap-4 overflow-y-auto rounded-2xl overflow-hidden">
         <CalConnectCard @open-connect-modal="$emit('openConnectModal')"/>
-        <CalMiniCalendar @date-selected="$emit('dateSelected', $event)"/>
+        <UpcomingEvents
+            :events="upcomingEvents"
+            :loading="loading"
+            :show-see-all="false"
+            :days="30"
+            :limit="10"
+        />
     </div>
 </template>
 

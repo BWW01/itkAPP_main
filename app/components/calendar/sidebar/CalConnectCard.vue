@@ -6,7 +6,7 @@ const emit = defineEmits<{ openConnectModal: [] }>()
 
 <template>
     <div>
-        <h3 class="text-sm font-bold text-muted-foreground mb-2">{{ $t('calendar.sidebar.todos') }}</h3>
+        <ListLabel :title="$t('calendar.sidebar.todos')"/>
         <Card class="bg-card text-primary gap-1">
             <CardHeader>
                 <div class="flex items-center gap-2">

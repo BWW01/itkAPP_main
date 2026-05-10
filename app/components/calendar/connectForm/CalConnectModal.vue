@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {computed} from 'vue'
-import CalConnectForm from "~/components/calendar/connectForm/CalConnectForm.vue";
 
 const props = defineProps<{ username: string }>()
 const emit = defineEmits<{ saved: [] }>()
@@ -14,20 +13,18 @@ const {moodleLink, neptunLink, saveStatus, saveError, canSave, save} =
 </script>
 
 <template>
-    <Dialog v-model:open="open">
-        <DialogContent class="max-w-md">
-            <DialogHeader>
-                <DialogTitle>{{ $t('calendar.connect.title') }}</DialogTitle>
-                <DialogDescription>{{ $t('calendar.connect.description') }}</DialogDescription>
-            </DialogHeader>
-            <CalConnectForm
-                v-model:moodle-link="moodleLink"
-                v-model:neptun-link="neptunLink"
-                :save-status="saveStatus"
-                :save-error="saveError"
-                :can-save="canSave"
-                @save="save"
-            />
-        </DialogContent>
-    </Dialog>
+    <AppModal
+        v-model:open="open"
+        :title="$t('calendar.connect.title')"
+        :description="$t('calendar.connect.description')"
+    >
+        <CalConnectForm
+            v-model:moodle-link="moodleLink"
+            v-model:neptun-link="neptunLink"
+            :save-status="saveStatus"
+            :save-error="saveError"
+            :can-save="canSave"
+            @save="save"
+        />
+    </AppModal>
 </template>

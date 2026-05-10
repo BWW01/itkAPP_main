@@ -17,7 +17,7 @@ const props = defineProps<{
         :href="href"
         :target="target"
         :class="cn(
-            'flex items-center gap-1.5 px-4 py-3 w-full bg-card rounded-[8px]',
+            'flex items-center gap-4 px-4 py-3 w-full bg-card rounded-[8px]',
             props.class, !props.static && 'hover:bg-muted/60 transition-colors duration-150 cursor-pointer'
         )"
     >

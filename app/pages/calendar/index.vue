@@ -56,10 +56,6 @@ function goToToday() {
     currentDate.value = new Date()
 }
 
-function goToDate(date: Date) {
-    currentDate.value = date
-}
-
 // --- Events ---
 const events = ref<CalendarEvent[]>([])
 const loading = ref(false)
@@ -101,7 +97,6 @@ const upcomingEvents = computed(() => {
 
 // --- Modal ---
 const showConnectModal = ref(false)
-const showBottomSheet = ref(false)
 </script>
 
 <template>
@@ -109,12 +104,6 @@ const showBottomSheet = ref(false)
 
         <CalConnectModal
             v-model:open="showConnectModal"
-            :username="username"
-            @saved="loadCalendar"
-        />
-
-        <CalBottomSheet
-            v-model:open="showBottomSheet"
             :username="username"
             @saved="loadCalendar"
         />
@@ -130,7 +119,7 @@ const showBottomSheet = ref(false)
             @view-change="view = $event"
         />
 
-        <Fab :icon="CalendarPlus" label="" @click="showBottomSheet = true"/>
+        <Fab :icon="CalendarPlus" label="" @click="showConnectModal = true"/>
 
         <div class="flex-1 min-h-0 flex overflow-hidden p-0 py-4 md:p-4 gap-4">
 
@@ -164,8 +153,8 @@ const showBottomSheet = ref(false)
 
             <CalSidebar
                 :upcoming-events="upcomingEvents"
+                :loading="loading"
                 @open-connect-modal="showConnectModal = true"
-                @date-selected="goToDate"
             />
         </div>
     </div>

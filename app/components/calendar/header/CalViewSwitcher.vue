@@ -20,7 +20,7 @@ const views: { key: CalView; label: string }[] = [
             v-for="v in views"
             :key="v.key"
             :class="[
-                'relative flex items-center justify-center gap-1.5 h-8 text-xs font-medium transition-all duration-200',
+                'relative flex items-center justify-center gap-1.5 h-8 text-xs font-medium transition-all duration-200 cursor-pointer',
                 'border-r border-border last:border-r-0',
                 fullWidth ? 'flex-1' : 'px-4',
                 view === v.key

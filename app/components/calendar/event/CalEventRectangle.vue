@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import type {CalendarEvent} from "~/utils/parseIcs";
-import CalEventPopoverContent from "~/components/calendar/event/CalEventPopoverContent.vue";
 
 const props = defineProps<{
     event: CalendarEvent
     col: number
 }>()
 
-const {eventTop, eventHeight} = useEventTime();
-
-const {eventColor} = useEventColor();
-
-// Mediaquery to compute style...
+const open = ref(false)
+const {eventTop, eventHeight} = useEventTime()
+const {eventColor} = useEventColor()
 const isMobile = useMediaQuery('(max-width: 768px)')
 
 const eventStyle = computed(() => ({
@@ -25,55 +22,39 @@ const eventStyle = computed(() => ({
 </script>
 
 <template>
-    <Popover>
-        <PopoverTrigger as-child>
-            <div :key="props.event.id"
-                 :class="[
-                        'absolute z-10 overflow-hidden cursor-pointer hover:opacity-90 p-1.5 md:p-2 gap-0 rounded-sm duration-300 transition-all hover:-translate-y-2',
-                        eventColor(event.color)
-                    ]"
-                 :style="eventStyle"
-            >
-                <div class="flex flex-row gap-2 p-0 h-full">
-                    <!-- Colored left bar -->
-                    <div :class="['hidden md:flex w-1 rounded-full shrink-0', eventColor(event.color, 'dot')]"/>
+    <div
+        :key="props.event.id"
+        :class="[
+            'absolute z-10 overflow-hidden cursor-pointer hover:opacity-90 p-1.5 md:p-2 gap-0 rounded-sm duration-300 transition-all hover:-translate-y-2',
+            eventColor(event.color)
+        ]"
+        :style="eventStyle"
+        @click="open = true"
+    >
+        <div class="flex flex-row gap-2 p-0 h-full">
+            <div :class="['hidden md:flex w-1 rounded-full shrink-0', eventColor(event.color, 'dot')]"/>
 
-                    <div class="hidden md:flex flex-col truncate">
-                        <!-- Single line when very cramped -->
-                        <div v-if="eventHeight(props.event) < 40" class="flex items-center gap-1 truncate">
-                            <span class="font-semibold text-xs opacity-70 shrink-0">{{ props.event.time }}</span>
-                            <span class="font-bold text-xs truncate">{{ props.event.title }}</span>
-                        </div>
-
-                        <!-- Two lines, no location -->
-                        <template v-else-if="eventHeight(props.event) < 80">
-                            <span class="font-semibold text-xs truncate opacity-70">{{ props.event.time }}</span>
-                            <span class="font-bold truncate text-sm">{{ props.event.title }}</span>
-                        </template>
-
-                        <!-- Two lines when there's space -->
-                        <template v-else>
-                            <span class="font-semibold text-xs truncate opacity-70">{{ props.event.time }}</span>
-                            <span class="font-bold truncate text-sm">{{ props.event.title }}</span>
-                            <p v-if="props.event.location" class="text-[11px] truncate">{{ props.event.location }}</p>
-                        </template>
-                    </div>
-
-                    <!-- Mobile -->
-                    <div class="flex flex-col md:hidden gap-1 wrap-break-word min-w-0 overflow-hidden">
-                        <span class="font-bold text-[10px]">{{ props.event.title }}</span>
-                    </div>
+            <div class="hidden md:flex flex-col truncate">
+                <div v-if="eventHeight(props.event) < 40" class="flex items-center gap-1 truncate">
+                    <span class="font-semibold text-xs opacity-70 shrink-0">{{ props.event.time }}</span>
+                    <span class="font-bold text-xs truncate">{{ props.event.title }}</span>
                 </div>
+                <template v-else-if="eventHeight(props.event) < 80">
+                    <span class="font-semibold text-xs truncate opacity-70">{{ props.event.time }}</span>
+                    <span class="font-bold truncate text-sm">{{ props.event.title }}</span>
+                </template>
+                <template v-else>
+                    <span class="font-semibold text-xs truncate opacity-70">{{ props.event.time }}</span>
+                    <span class="font-bold truncate text-sm">{{ props.event.title }}</span>
+                    <p v-if="props.event.location" class="text-[11px] truncate">{{ props.event.location }}</p>
+                </template>
             </div>
-        </PopoverTrigger>
 
-        <PopoverContent class="w-72 p-0" align="start">
-            <CalEventPopoverContent :event="event"/>
-        </PopoverContent>
+            <div class="flex flex-col md:hidden gap-1 wrap-break-word min-w-0 overflow-hidden">
+                <span class="font-bold text-[10px]">{{ props.event.title }}</span>
+            </div>
+        </div>
+    </div>
 
-    </Popover>
+    <CalEventModal v-model:open="open" :event="props.event"/>
 </template>
-
-<style scoped>
-
-</style>
