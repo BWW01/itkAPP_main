@@ -11,7 +11,7 @@ const navItems = [
 </script>
 
 <template>
-    <div class="h-screen bg-background flex flex-col md:flex-row">
+    <div class="h-dvh bg-background flex flex-col md:flex-row">
 
         <AppNavRail :items="navItems"/>
 
