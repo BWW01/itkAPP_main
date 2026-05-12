@@ -20,7 +20,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <header class="bg-background shrink-0">
+    <header class="bg-background shrink-0" data-testid="cal-header">
         <!-- Desktop: single row -->
         <div class="hidden md:flex items-center justify-between gap-4 px-4 pt-4">
             <div class="flex items-center gap-4 min-w-0">

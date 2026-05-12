@@ -35,7 +35,8 @@ export function parseIcsToEvents(icsString: string): CalendarEvent[] {
         if (start < now) continue
 
         const title = event.summary || 'Névtelen esemény'
-        const url = vevent.getFirstPropertyValue('url') as string | undefined
+        // returns null, so if it IS null we assign undefined to it
+        const url = (vevent.getFirstPropertyValue('url') as string | null) ?? undefined
 
         const endDate = event.endDate?.toJSDate()
         const allDay = event.startDate.isDate

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {Calendar, Settings, Mail} from 'lucide-vue-next'
 import {parseIcsToEvents, type CalendarEvent} from '@/utils/parseIcs'
-import {DashboardHero, DashboardUrgent} from "~/components/dashboard";
-import {List, ListLabel, ListGridItem, ListContent} from "~/components/shared/list";
 
 definePageMeta({layout: 'default'})
 useHead({title: $t('pages.dashboard')})
@@ -112,7 +110,7 @@ const urgentEvents = computed(() => {
                         <DashboardUrgent :events="urgentEvents"/>
 
                         <!-- Quick links -->
-                        <List>
+                        <List data-testid="dashboard-links">
                             <ListLabel :title="$t('dashboard.quickLinks')"/>
                             <ListContent class="grid grid-cols-4 gap-0.5">
                                 <ListGridItem class="col-span-2 row-span-2" label="Naptár"

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import {Mail, User, Calendar} from 'lucide-vue-next'
-import {ProfileCalendarLinks, ProfilePushNotifications} from '@/components/profile/index'
+import {User, Calendar} from 'lucide-vue-next'
 
 definePageMeta({layout: 'default'})
 useHead({title: $t('pages.profile')})

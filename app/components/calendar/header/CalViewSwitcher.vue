@@ -17,8 +17,10 @@ const views: { key: CalView; label: string }[] = [
     <div
         :class="['flex items-center rounded-full border border-border overflow-hidden', fullWidth ? 'w-full' : 'shrink-0']">
         <button
+            type="button"
             v-for="v in views"
             :key="v.key"
+            :data-testid="`view-${v.key}`"
             :class="[
                 'relative flex items-center justify-center gap-1.5 h-8 text-xs font-medium transition-all duration-200 cursor-pointer',
                 'border-r border-border last:border-r-0',

@@ -12,8 +12,16 @@ export default defineNuxtConfig({
         "@vueuse/nuxt",
         "nuxt-auth-utils",
         '@nuxtjs/i18n',
-        "@vite-pwa/nuxt",
+        ...(!process.env.VITEST ? ["@vite-pwa/nuxt"] : []),
     ],
+
+    typescript: {
+        tsConfig: {
+            include: [
+                '../tests/unit/**/*',
+            ],
+        },
+    },
 
     /* PWA options */
     pwa: {

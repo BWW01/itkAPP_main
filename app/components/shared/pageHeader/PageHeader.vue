@@ -28,8 +28,10 @@ defineProps<{
             </button>
 
             <div class="min-w-0">
-                <h1 class="text-2xl font-bold text-foreground truncate">{{ title }}</h1>
-                <p v-if="subtitle" class="text-xs text-muted-foreground mt-0.5">{{ subtitle }}</p>
+                <h1 class="text-2xl font-bold text-foreground truncate" data-testid="page-title">{{ title }}</h1>
+                <p v-if="subtitle" class="text-xs text-muted-foreground mt-0.5" data-testid="page-subtitle">{{
+                        subtitle
+                    }}</p>
             </div>
         </div>
 
