@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         assertMethod(event, "POST");
         const body = await readBody<{
             username: string;
-            neptuneLink?: string | null;
+            neptunLink?: string | null;
             moodleLink?: string | null;
             extras?: CalendarLink[];
         }>(event);
@@ -27,11 +27,11 @@ export default defineEventHandler(async (event) => {
             throw createError({statusCode: 400, message: "No user"});
         }
 
-        const safeNeptunUrl = validateUrl(body.neptuneLink);
+        const safeNeptunUrl = validateUrl(body.neptunLink);
         const safeMoodleUrl = validateUrl(body.moodleLink);
 
         const result = await upsertLinks(body.username, {
-            neptuneLink: safeNeptunUrl ? {url: safeNeptunUrl, syncInterval: "1d"} as CalendarLink : null,
+            neptunLink: safeNeptunUrl ? {url: safeNeptunUrl, syncInterval: "1d"} as CalendarLink : null,
             moodleLink: safeMoodleUrl ? {url: safeMoodleUrl, syncInterval: "1d"} as CalendarLink : null,
             extras: body.extras || [],
         });

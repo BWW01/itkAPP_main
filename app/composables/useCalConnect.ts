@@ -27,11 +27,11 @@ export function useCalConnect(
         saveStatus.value = 'idle'
         saveError.value = ''
         try {
-            const data = await $fetch<{ moodleLink: CalendarLink | null, neptuneLink: CalendarLink | null }>(
+            const data = await $fetch<{ moodleLink: CalendarLink | null, neptunLink: CalendarLink | null }>(
                 `/api/calendar/getCalLinks?username=${username.value}`
             )
             moodleLink.value = data?.moodleLink?.url || ''
-            neptunLink.value = data?.neptuneLink?.url || ''
+            neptunLink.value = data?.neptunLink?.url || ''
         } catch (e) {
             console.error('Nem sikerült betölteni a meglévő linkeket:', e)
         }
@@ -46,7 +46,7 @@ export function useCalConnect(
                 method: 'POST',
                 body: {
                     username: username.value,
-                    neptuneLink: neptunLink.value.trim() || null,
+                    neptunLink: neptunLink.value.trim() || null,
                     moodleLink: moodleLink.value.trim() || null,
                     extras: [],
                 },

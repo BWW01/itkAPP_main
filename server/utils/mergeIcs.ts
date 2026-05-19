@@ -83,7 +83,7 @@ export async function syncUserCalendar(
     ldapUsername: string,
     options: {
         forceAll?: boolean;
-        syncNeptune?: boolean;
+        syncNeptun?: boolean;
         syncMoodle?: boolean;
         syncExtraUrls?: string[];
     } = {}
@@ -105,13 +105,13 @@ export async function syncUserCalendar(
     const updates: Partial<typeof associations.$inferInsert> = {};
     const extrasLastSynced = {...(assoc.extrasLastSyncedAt || {})};
 
-    // Neptune
-    if (assoc.neptuneLink?.url) {
-        if (options.forceAll || options.syncNeptune) {
-            const ics = await fetchIcs(assoc.neptuneLink.url);
+    // Neptun
+    if (assoc.neptunLink?.url) {
+        if (options.forceAll || options.syncNeptun) {
+            const ics = await fetchIcs(assoc.neptunLink.url);
             if (ics) {
                 sources.push(ics);
-                updates.neptuneLastSyncedAt = now;
+                updates.neptunLastSyncedAt = now;
             } else {
                 // Fallback: use cached merged file's events? Skip this source.
             }
@@ -151,11 +151,11 @@ export async function syncUserCalendar(
     // Simpler approach: always fetch all configured sources when merging.
     // Override: fetch any missing sources now to ensure a complete merge.
     const allSources: string[] = [];
-    if (assoc.neptuneLink?.url) {
+    if (assoc.neptunLink?.url) {
         const ics =
-            updates.neptuneLastSyncedAt
+            updates.neptunLastSyncedAt
                 ? sources.shift() // already fetched
-                : await fetchIcs(assoc.neptuneLink.url);
+                : await fetchIcs(assoc.neptunLink.url);
         if (ics) allSources.push(ics);
     }
     if (assoc.moodleLink?.url) {
@@ -239,7 +239,7 @@ export async function getMergedCalendar(
 export async function upsertLinks(
     ldapUsername: string,
     payload: {
-        neptuneLink?: CalendarLink | null;
+        neptunLink?: CalendarLink | null;
         moodleLink?: CalendarLink | null;
         extras?: CalendarLink[];
     }
@@ -254,7 +254,7 @@ export async function upsertLinks(
             .update(associations)
             .set({
                 // Use undefined instead of null coalescing, so null can override existing values (for deletions).
-                neptuneLink: payload.neptuneLink !== undefined ? payload.neptuneLink : existing.neptuneLink,
+                neptunLink: payload.neptunLink !== undefined ? payload.neptunLink : existing.neptunLink,
                 moodleLink: payload.moodleLink !== undefined ? payload.moodleLink : existing.moodleLink,
                 extras: payload.extras !== undefined ? payload.extras : existing.extras,
             })
@@ -262,7 +262,7 @@ export async function upsertLinks(
     } else {
         await db.insert(associations).values({
             ldapUsername,
-            neptuneLink: payload.neptuneLink ?? null,
+            neptunLink: payload.neptunLink ?? null,
             moodleLink: payload.moodleLink ?? null,
             extras: payload.extras ?? [],
         });

@@ -20,7 +20,7 @@ export const associations = pgTable("Associations", {
     moodleLink: jsonb("moodleLink").$type<CalendarLink | null>(),
     extras: jsonb("extras").$type<CalendarLink[]>().notNull().default([]),
     mergedCalendarHash: text("mergedCalendarHash"),
-    neptuneLastSyncedAt: timestamp("neptuneLastSyncedAt"),
+    neptunLastSyncedAt: timestamp("neptunLastSyncedAt"),
     moodleLastSyncedAt: timestamp("moodleLastSyncedAt"),
     extrasLastSyncedAt: jsonb("extrasLastSyncedAt")
         .$type<Record<string, string>>()

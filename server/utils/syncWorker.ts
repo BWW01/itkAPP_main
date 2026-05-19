@@ -5,11 +5,16 @@ import { associations, ldapInfo } from "../db/schema";
 import { isDue } from "./interval";
 import { syncUserCalendar } from "./mergeIcs";
 import { checkAndSendNotifications } from "./notifications";
+import { createHash } from "node:crypto";
 
 const STAGGER_WINDOW_MS = 30 * 60 * 1000;
 
 function getUserOffset(userId: number): number {
-    return (userId * 60_000) % STAGGER_WINDOW_MS;
+    const hash = createHash("sha256")
+        .update(String(userId))
+        .digest("hex");
+    const numeric = parseInt(hash.slice(0, 8), 16);
+    return numeric % STAGGER_WINDOW_MS;
 }
 
 async function runUserSyncIfDue(ldapUsername: string) {
@@ -19,9 +24,9 @@ async function runUserSyncIfDue(ldapUsername: string) {
         .where(eq(associations.ldapUsername, ldapUsername));
     if (!assoc) return;
 
-    const syncNeptune =
-        !!assoc.neptuneLink?.url &&
-        isDue(assoc.neptuneLastSyncedAt, assoc.neptuneLink.syncInterval);
+    const syncNeptun =
+        !!assoc.neptunLink?.url &&
+        isDue(assoc.neptunLastSyncedAt, assoc.neptunLink.syncInterval);
 
     const syncMoodle =
         !!assoc.moodleLink?.url &&
@@ -36,15 +41,15 @@ async function runUserSyncIfDue(ldapUsername: string) {
         })
         .map((e) => e.url);
 
-    if (!syncNeptune && !syncMoodle && syncExtraUrls.length === 0) return;
+    if (!syncNeptun && !syncMoodle && syncExtraUrls.length === 0) return;
 
     console.log(
-        `[sync] ${ldapUsername} neptune=${syncNeptune} moodle=${syncMoodle} extras=${syncExtraUrls.length}`
+        `[sync] ${ldapUsername} neptun=${syncNeptun} moodle=${syncMoodle} extras=${syncExtraUrls.length}`
     );
 
     try {
         const result = await syncUserCalendar(ldapUsername, {
-            syncNeptune,
+            syncNeptun,
             syncMoodle,
             syncExtraUrls,
         });

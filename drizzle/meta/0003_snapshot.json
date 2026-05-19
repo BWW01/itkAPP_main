@@ -20,8 +20,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "neptuneLink": {
-          "name": "neptuneLink",
+        "neptunLink": {
+          "name": "neptunLink",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
@@ -45,8 +45,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "neptuneLastSyncedAt": {
-          "name": "neptuneLastSyncedAt",
+        "neptunLastSyncedAt": {
+          "name": "neptunLastSyncedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false

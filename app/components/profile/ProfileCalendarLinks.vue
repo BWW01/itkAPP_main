@@ -6,24 +6,24 @@ const {t, locale} = useI18n()
 const {user} = useUserSession()
 const username = computed(() => (user.value as any)?.login as string | undefined)
 
-const neptuneUrl = ref('')
+const neptunUrl = ref('')
 const moodleUrl = ref('')
 const calStatus = ref<'idle' | 'saving' | 'saved' | 'error'>('idle')
 const calError = ref('')
-const neptuneLastSync = ref<string | null>(null)
+const neptunLastSync = ref<string | null>(null)
 const moodleLastSync = ref<string | null>(null)
 
 async function load() {
     if (!username.value) return
     const data = await $fetch<{
-        neptuneLink: CalendarLink | null
+        neptunLink: CalendarLink | null
         moodleLink: CalendarLink | null
-        neptuneLastSyncedAt: string | null
+        neptunLastSyncedAt: string | null
         moodleLastSyncedAt: string | null
     }>(`/api/calendar/getCalLinks?username=${username.value}`)
-    neptuneUrl.value = data?.neptuneLink?.url ?? ''
+    neptunUrl.value = data?.neptunLink?.url ?? ''
     moodleUrl.value = data?.moodleLink?.url ?? ''
-    neptuneLastSync.value = data?.neptuneLastSyncedAt ?? null
+    neptunLastSync.value = data?.neptunLastSyncedAt ?? null
     moodleLastSync.value = data?.moodleLastSyncedAt ?? null
 }
 
@@ -36,7 +36,7 @@ async function save() {
             method: 'POST',
             body: {
                 username: username.value,
-                neptuneLink: neptuneUrl.value.trim() || null,
+                neptunLink: neptunUrl.value.trim() || null,
                 moodleLink: moodleUrl.value.trim() || null,
                 extras: [],
             },
@@ -74,10 +74,10 @@ onMounted(load)
                 <div class="relative w-full">
                     <Link
                         class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none"/>
-                    <Input v-model="neptuneUrl" type="url" :placeholder="$t('calendar.connect.neptunPlaceholder')"
+                    <Input v-model="neptunUrl" type="url" :placeholder="$t('calendar.connect.neptunPlaceholder')"
                            class="pl-9"/>
                 </div>
-                <p class="text-[10px] text-muted-foreground">{{ formatSync(neptuneLastSync) }}</p>
+                <p class="text-[10px] text-muted-foreground">{{ formatSync(neptunLastSync) }}</p>
             </ListItem>
             <ListItem static class="flex-col items-start gap-1.5">
                 <Label class="flex items-center gap-2">
