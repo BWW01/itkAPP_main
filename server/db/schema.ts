@@ -16,7 +16,7 @@ export const associations = pgTable("Associations", {
         .notNull()
         .unique()
         .references(() => ldapInfo.ldapUsername),
-    neptuneLink: jsonb("neptuneLink").$type<CalendarLink | null>(),
+    neptunLink: jsonb("neptunLink").$type<CalendarLink | null>(),
     moodleLink: jsonb("moodleLink").$type<CalendarLink | null>(),
     extras: jsonb("extras").$type<CalendarLink[]>().notNull().default([]),
     mergedCalendarHash: text("mergedCalendarHash"),
@@ -52,7 +52,6 @@ export const settings = pgTable("Settings", {
         .unique()
         .references(() => ldapInfo.id, {onDelete: "cascade"}),
     language: text("language").notNull(),
-    // Itt adtuk hozzá a default(15) értéket
     notificationTime: integer("notificationTime").notNull().default(15),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
