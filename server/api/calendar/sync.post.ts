@@ -1,7 +1,6 @@
 import { syncUserCalendar } from "../../utils/mergeIcs";
 
 export default defineEventHandler(async (event) => {
-    // Sessionből is kiszedheted a usert, ha már van bejelentkezés
     const body = await readBody<{ username: string }>(event);
 
     if (!body?.username) {
@@ -9,7 +8,6 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        // A forceAll: true kikényszeríti az azonnali letöltést az összes linkről
         const result = await syncUserCalendar(body.username, { forceAll: true });
 
         return {

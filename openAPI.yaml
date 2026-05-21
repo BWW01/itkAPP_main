@@ -1,0 +1,740 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Calendar & Auth API",
+    "version": "1.0.0",
+    "description": "LDAP authentication, calendar sync, and push notification API"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Local API base"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Calendar",
+      "description": "Calendar management and sync"
+    },
+    {
+      "name": "Push Notifications",
+      "description": "Web push subscription management"
+    },
+    {
+      "name": "User",
+      "description": "User information and onboarding"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login with LDAP credentials",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johd42"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "JohnDoe1998"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout and clear auth cookie",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get current authenticated user",
+        "responses": {
+          "200": {
+            "description": "Current user or null if not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthUser"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendar/{user}": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Get merged ICS calendar for a user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "LDAP username",
+            "example": "johd42"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ICS calendar file",
+            "content": {
+              "text/calendar": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/calendar/links": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Get calendar links for a user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "johd42"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Association/calendar links record or null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Association"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Upsert calendar links for a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johd42"
+                  },
+                  "neptunLink": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true,
+                    "example": "https://neptun.ppke.hu/calendar.ics"
+                  },
+                  "moodleLink": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true,
+                    "example": "https://moodle.ppke.hu/calendar.ics"
+                  },
+                  "extras": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CalendarLink"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upsert successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Association"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/calendar/sync": {
+      "post": {
+        "tags": [
+          "Calendar"
+        ],
+        "summary": "Force sync calendar for a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johd42"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sync result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "changed": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Naptár sikeresen frissítve!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/push/subscribe": {
+      "post": {
+        "tags": [
+          "Push Notifications"
+        ],
+        "summary": "Subscribe to web push notifications",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "keys"
+                ],
+                "properties": {
+                  "endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://fcm.googleapis.com/fcm/send/abc123"
+                  },
+                  "keys": {
+                    "type": "object",
+                    "required": [
+                      "p256dh",
+                      "auth"
+                    ],
+                    "properties": {
+                      "p256dh": {
+                        "type": "string",
+                        "example": "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlTGet..."
+                      },
+                      "auth": {
+                        "type": "string",
+                        "example": "tBHItJI5svbpez7KI4CCXg=="
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/push/unsubscribe": {
+      "post": {
+        "tags": [
+          "Push Notifications"
+        ],
+        "summary": "Unsubscribe from web push notifications",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "endpoint"
+                ],
+                "properties": {
+                  "endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://fcm.googleapis.com/fcm/send/abc123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/push/send": {
+      "post": {
+        "tags": [
+          "Push Notifications"
+        ],
+        "summary": "Send a push notification (public)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "New Event!"
+                  },
+                  "body": {
+                    "type": "string",
+                    "example": "You have a new calendar event."
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "/calendar"
+                  },
+                  "userId": {
+                    "type": "integer",
+                    "description": "If provided, only sends to this specific user's subscriptions. Otherwise sends to all subscribers.\n",
+                    "example": 42
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notifications sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{user}/onboarding": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get onboarding status for a user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "johd42"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "onboardingDone": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "auth_token",
+        "description": "Session cookie set after a successful login"
+      }
+    },
+    "schemas": {
+      "AuthUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "login": {
+            "type": "string",
+            "example": "johd42"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true,
+            "example": "johd42@hallhato.itk.ppke.hu"
+          },
+          "name": {
+            "type": "string",
+            "example": "Doe John"
+          }
+        }
+      },
+      "CalendarLink": {
+        "type": "object",
+        "required": [
+          "url",
+          "syncInterval"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "example":"portal.itk.ppke.hu/calendar.ics"
+          },
+          "syncInterval": {
+            "type": "string",
+            "example": "1d"
+          }
+        }
+      },
+      "Association": {
+        "type": "object",
+        "properties": {
+          "ldapUsername": {
+            "type": "string",
+            "example": "johd42"
+          },
+          "neptunLink": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CalendarLink"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "moodleLink": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CalendarLink"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "extras": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalendarLink"
+            }
+          },
+          "onboardingDone": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad request"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 400,
+              "message": "Missing required fields"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 401,
+              "message": "Unauthorized"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 404,
+              "message": "Not found"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 500,
+              "message": "Something went wrong"
+            }
+          }
+        }
+      }
+    }
+  }
+}

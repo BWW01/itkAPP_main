@@ -112,8 +112,6 @@ export async function syncUserCalendar(
             if (ics) {
                 sources.push(ics);
                 updates.neptunLastSyncedAt = now;
-            } else {
-                // Fallback: use cached merged file's events? Skip this source.
             }
         }
     }
