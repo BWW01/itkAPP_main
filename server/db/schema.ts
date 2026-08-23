@@ -55,3 +55,17 @@ export const settings = pgTable("Settings", {
     notificationTime: integer("notificationTime").notNull().default(15),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const studentSites = pgTable("StudentSites", {
+    id: serial("id").primaryKey(),
+    userId: integer("userId")
+        .notNull()
+        .unique()
+        .references(() => ldapInfo.id, {onDelete: "cascade"}),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    tags: jsonb("tags").$type<string[]>().notNull().default([]),
+    category: text("category").notNull().default("current"), // 'og' | 'current' | 'wip'
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+})
