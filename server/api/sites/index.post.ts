@@ -3,10 +3,10 @@ import { db } from "../../db";
 import { studentSites } from "../../db/schema";
 
 const bodySchema = z.object({
-    name: z.string().trim().min(1).max(80),
-    url: z.string().trim().url(),
-    tags: z.array(z.string().trim().min(1).max(30)).max(10),
-    category: z.enum(["og", "current", "wip"]),
+    name: z.string().trim().min(1, "A név nem lehet üres.").max(50, "A név legfeljebb 50 karakter lehet."),
+    url: z.string().trim().url("Érvénytelen URL formátum."),
+    tags: z.array(z.string().trim()),
+    category: z.enum(["og", "current", "wip"], {message: "Érvénytelen kategória."}),
 });
 
 export default defineEventHandler(async (event) => {
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     if (!parsed.success) {
         throw createError({
             statusCode: 400,
-            message: parsed.error.issues[0]?.message ?? "Error parsing data.",
+            message: parsed.error.issues[0]?.message ?? "Hiba. Nem árulom el hol.",
         });
     }
 
