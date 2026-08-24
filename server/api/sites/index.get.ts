@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
 
     const sites = await db
         .select({
+            userId: studentSites.userId,
             name: studentSites.name,
             url: studentSites.url,
             tags: studentSites.tags,
