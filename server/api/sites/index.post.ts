@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     if (!parsed.success) {
         throw createError({
             statusCode: 400,
-            message: parsed.error.issues[0]?.message ?? "Hiba. Nem árulom el hol.",
+            message: parsed.error.issues[0]?.message ?? "Adat feldolgozási hiba.",
         });
     }
 
