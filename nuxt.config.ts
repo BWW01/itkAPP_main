@@ -83,6 +83,12 @@ export default defineNuxtConfig({
         public: {
             vapidPublicKey: "", // set via NUXT_PUBLIC_VAPID_PUBLIC_KEY
         },
+        session:{
+          cookie: {
+            sameSite: "none",
+            secure: true,
+          },
+        },
     },
 
     // ESLint config
