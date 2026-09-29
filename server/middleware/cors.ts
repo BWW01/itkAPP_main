@@ -2,7 +2,8 @@ export default defineEventHandler((event) => {
     if (!event.path.startsWith('/api/')) return
 
     const handled = handleCors(event, {
-        origin: '*',
+        origin: () => true,
+        credentials: true,
         methods: '*',
         allowHeaders: '*',
         preflight: {
