@@ -23,10 +23,20 @@ export default defineEventHandler(async (event) => {
             message: "Hibás felhasználónév vagy jelszó!",
         });
     }
+    const pick = (name: string): string | undefined => {
+        const key = Object.keys(user).find((k) => k.toLowerCase() === name.toLowerCase());
+        if (!key) return undefined;
+        const raw = (user as Record<string, unknown>)[key];
+        const v = Array.isArray(raw) ? raw[0] : raw;
+        if (v == null) return undefined;
+        const s = Buffer.isBuffer(v) ? v.toString("utf8") : String(v);
+        return s.trim() || undefined;
+    };
 
-    const displayName = user.displayName || user.cn || username;
-    const [familyName, ...givenNames] = displayName.split(" ");
-    const givenName = givenNames.join(" ") || familyName;
+    const familyName = pick("sn") ?? username;
+    const givenName = pick("givenName") ?? "";
+    const displayName = pick("displayName") ?? (`${familyName} ${givenName}`.trim() || username);
+    const email = pick("mail") ?? null;
 
     const [dbUser] = await db
         .insert(ldapInfo)
@@ -48,9 +58,9 @@ export default defineEventHandler(async (event) => {
 
     await setUserSession(event, {
         user: {
-            id: dbUser.id, // ← include it in the session
-            login: user.cn || username,
-            email: user.mail || null,
+            id: dbUser.id,
+            login: username,
+            email,
             name: displayName,
         },
     });
