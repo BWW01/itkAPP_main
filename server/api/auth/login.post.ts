@@ -38,23 +38,7 @@ export default defineEventHandler(async (event) => {
     const displayName = pick("displayName") ?? (`${familyName} ${givenName}`.trim() || username);
     const email = pick("mail") ?? null;
 
-    const [dbUser] = await db
-        .insert(ldapInfo)
-        .values({
-            ldapUsername: username,
-            email: user.mail || null,
-            familyName,
-            givenName,
-        })
-        .onConflictDoUpdate({
-            target: ldapInfo.ldapUsername,
-            set: {
-                email: user.mail || null,
-                familyName,
-                givenName,
-            },
-        })
-        .returning({ id: ldapInfo.id }); // ← get the DB id back
+    const dbUser = await upsertLdapUser(user, username);
 
     await setUserSession(event, {
         user: {

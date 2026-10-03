@@ -15,7 +15,7 @@ export async function ldapLogin(username: string, password: string) {
             userSearchBase: `ou=people,${BASE_DN}`,
             usernameAttribute: "uid",
             username,
-            attributes: ["uid", "cn", "displayName", "givenName", "sn", "mail"],
+            attributes: ["*","+"],
         });
     } catch (error: any) {
         console.error("LDAP Bejelentkezési hiba:", error.message);
