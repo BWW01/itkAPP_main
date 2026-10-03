@@ -1,6 +1,6 @@
 {
-  "id": "774acde0-d9ae-4b74-8689-9643b16ece41",
-  "prevId": "087a57d2-39e9-4d7e-99a7-43b6183d6883",
+  "id": "c6a8e6b3-0431-4c8a-993e-c3464f860b5c",
+  "prevId": "d1bcc862-aeca-4583-a601-872638361fd8",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -20,12 +20,56 @@
           "primaryKey": false,
           "notNull": true
         },
-        "links": {
-          "name": "links",
-          "type": "text[]",
+        "neptunLink": {
+          "name": "neptunLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLink": {
+          "name": "moodleLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extras": {
+          "name": "extras",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": true,
-          "default": "'{}'"
+          "default": "'[]'::jsonb"
+        },
+        "mergedCalendarHash": {
+          "name": "mergedCalendarHash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "neptunLastSyncedAt": {
+          "name": "neptunLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLastSyncedAt": {
+          "name": "moodleLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extrasLastSyncedAt": {
+          "name": "extrasLastSyncedAt",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "onboardingDone": {
+          "name": "onboardingDone",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -99,8 +143,39 @@
           "primaryKey": false,
           "notNull": true
         },
+        "fullName": {
+          "name": "fullName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ppkePersonActivityStatus": {
+          "name": "ppkePersonActivityStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "eduPersonOrgUnitDN": {
+          "name": "eduPersonOrgUnitDN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ldapSyncedAt": {
+          "name": "ldapSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -116,77 +191,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "ldapUsername"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.PasswordlessCred": {
-      "name": "PasswordlessCred",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "externalId": {
-          "name": "externalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "publicKey": {
-          "name": "publicKey",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "algorithm": {
-          "name": "algorithm",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "counter": {
-          "name": "counter",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "PasswordlessCred_userId_LdapInfo_id_fk": {
-          "name": "PasswordlessCred_userId_LdapInfo_id_fk",
-          "tableFrom": "PasswordlessCred",
-          "tableTo": "LdapInfo",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "PasswordlessCred_externalId_unique": {
-          "name": "PasswordlessCred_externalId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "externalId"
           ]
         }
       },
@@ -270,6 +274,160 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Settings": {
+      "name": "Settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notificationTime": {
+          "name": "notificationTime",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 15
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Settings_userId_LdapInfo_id_fk": {
+          "name": "Settings_userId_LdapInfo_id_fk",
+          "tableFrom": "Settings",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Settings_userId_unique": {
+          "name": "Settings_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.StudentSites": {
+      "name": "StudentSites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'current'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "StudentSites_userId_LdapInfo_id_fk": {
+          "name": "StudentSites_userId_LdapInfo_id_fk",
+          "tableFrom": "StudentSites",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "StudentSites_userId_unique": {
+          "name": "StudentSites_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

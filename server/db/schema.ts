@@ -21,52 +21,9 @@ export const ldapInfo = pgTable("LdapInfo", {
     email: text("email"),
     familyName: text("familyName").notNull(),
     givenName: text("givenName").notNull(),
-
-    dn: text("dn"),
-    entryUUID: uuid("entryUUID").unique(),
-    displayName: text("displayName"),
-    cn: text("cn"),
-    cnEn: text("cnEn"),
-    familyNameEn: text("familyNameEn"),
-    givenNameEn: text("givenNameEn"),
-
-    objectClass: text("objectClass").array().notNull().default(sql`'{}'::text[]`),
-    structuralObjectClass: text("structuralObjectClass"),
-
-    uidNumber: integer("uidNumber"),
-    gidNumber: integer("gidNumber"),
-    homeDirectory: text("homeDirectory"),
-    loginShell: text("loginShell"),
-    shadowLastChange: bigint("shadowLastChange", {mode: "number"}),
-
-    sambaSID: text("sambaSID"),
-    sambaPrimaryGroupSID: text("sambaPrimaryGroupSID"),
-    sambaPwdLastSet: bigint("sambaPwdLastSet", {mode: "number"}),
-
-    ppkePersonFaculty: text("ppkePersonFaculty"),
-    ppkePersonMajor: text("ppkePersonMajor"),
-    ppkePersonOrgID: text("ppkePersonOrgID"),
-    ppkePersonActivityStatus: text("ppkePersonActivityStatus"),
-
-    eduPersonAffiliation: text("eduPersonAffiliation").array().notNull().default(sql`'{}'::text[]`),
-    eduPersonEntitlement: text("eduPersonEntitlement").array().notNull().default(sql`'{}'::text[]`),
+    fullName: text("fullName").notNull(),
     eduPersonOrgUnitDN: text("eduPersonOrgUnitDN"),
-
-    mailHost: text("mailHost"),
-    zimbraMailDeliveryAddress: text("zimbraMailDeliveryAddress"),
-
-    createTimestamp: timestamp("createTimestamp"),
-    modifyTimestamp: timestamp("modifyTimestamp"),
-    creatorsName: text("creatorsName"),
-    modifiersName: text("modifiersName"),
-    entryCSN: text("entryCSN"),
-    entryDN: text("entryDN"),
-    subschemaSubentry: text("subschemaSubentry"),
-    hasSubordinates: boolean("hasSubordinates"),
-
-    rawAttributes: jsonb("rawAttributes").$type<LdapRawAttributes>().notNull().default({}),
     ldapSyncedAt: timestamp("ldapSyncedAt"),
-
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdate(() => new Date()),
 });

@@ -1,0 +1,1 @@
+ALTER TABLE "LdapInfo" DROP COLUMN "ppkePersonActivityStatus";

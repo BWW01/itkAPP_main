@@ -1,1 +1,0 @@
-ALTER TABLE "Settings" ALTER COLUMN "notificationTime" SET DEFAULT 15;
