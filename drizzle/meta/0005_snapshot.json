@@ -1,0 +1,650 @@
+{
+  "id": "0eefc650-fa51-4de0-a9fe-669bd8bda5d0",
+  "prevId": "429cc80e-d7bc-413b-bbfb-f706da4f6162",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Associations": {
+      "name": "Associations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "neptunLink": {
+          "name": "neptunLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLink": {
+          "name": "moodleLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extras": {
+          "name": "extras",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "mergedCalendarHash": {
+          "name": "mergedCalendarHash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "neptunLastSyncedAt": {
+          "name": "neptunLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLastSyncedAt": {
+          "name": "moodleLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extrasLastSyncedAt": {
+          "name": "extrasLastSyncedAt",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "onboardingDone": {
+          "name": "onboardingDone",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Associations_ldapUsername_LdapInfo_ldapUsername_fk": {
+          "name": "Associations_ldapUsername_LdapInfo_ldapUsername_fk",
+          "tableFrom": "Associations",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "ldapUsername"
+          ],
+          "columnsTo": [
+            "ldapUsername"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Associations_ldapUsername_unique": {
+          "name": "Associations_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.LdapInfo": {
+      "name": "LdapInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "familyName": {
+          "name": "familyName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "givenName": {
+          "name": "givenName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dn": {
+          "name": "dn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entryUUID": {
+          "name": "entryUUID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "displayName": {
+          "name": "displayName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cn": {
+          "name": "cn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cnEn": {
+          "name": "cnEn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "familyNameEn": {
+          "name": "familyNameEn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "givenNameEn": {
+          "name": "givenNameEn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "objectClass": {
+          "name": "objectClass",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "structuralObjectClass": {
+          "name": "structuralObjectClass",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uidNumber": {
+          "name": "uidNumber",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gidNumber": {
+          "name": "gidNumber",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "homeDirectory": {
+          "name": "homeDirectory",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "loginShell": {
+          "name": "loginShell",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shadowLastChange": {
+          "name": "shadowLastChange",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sambaSID": {
+          "name": "sambaSID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sambaPrimaryGroupSID": {
+          "name": "sambaPrimaryGroupSID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sambaPwdLastSet": {
+          "name": "sambaPwdLastSet",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ppkePersonFaculty": {
+          "name": "ppkePersonFaculty",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ppkePersonMajor": {
+          "name": "ppkePersonMajor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ppkePersonOrgID": {
+          "name": "ppkePersonOrgID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ppkePersonActivityStatus": {
+          "name": "ppkePersonActivityStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "eduPersonAffiliation": {
+          "name": "eduPersonAffiliation",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "eduPersonEntitlement": {
+          "name": "eduPersonEntitlement",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "eduPersonOrgUnitDN": {
+          "name": "eduPersonOrgUnitDN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mailHost": {
+          "name": "mailHost",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zimbraMailDeliveryAddress": {
+          "name": "zimbraMailDeliveryAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createTimestamp": {
+          "name": "createTimestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "modifyTimestamp": {
+          "name": "modifyTimestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creatorsName": {
+          "name": "creatorsName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "modifiersName": {
+          "name": "modifiersName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entryCSN": {
+          "name": "entryCSN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entryDN": {
+          "name": "entryDN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subschemaSubentry": {
+          "name": "subschemaSubentry",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hasSubordinates": {
+          "name": "hasSubordinates",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rawAttributes": {
+          "name": "rawAttributes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "ldapSyncedAt": {
+          "name": "ldapSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "LdapInfo_ldapUsername_unique": {
+          "name": "LdapInfo_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        },
+        "LdapInfo_entryUUID_unique": {
+          "name": "LdapInfo_entryUUID_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "entryUUID"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.PushSubscriptions": {
+      "name": "PushSubscriptions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endpoint": {
+          "name": "endpoint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "p256dh": {
+          "name": "p256dh",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auth": {
+          "name": "auth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "endpoint_idx": {
+          "name": "endpoint_idx",
+          "columns": [
+            {
+              "expression": "endpoint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "PushSubscriptions_userId_LdapInfo_id_fk": {
+          "name": "PushSubscriptions_userId_LdapInfo_id_fk",
+          "tableFrom": "PushSubscriptions",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Settings": {
+      "name": "Settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notificationTime": {
+          "name": "notificationTime",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 15
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Settings_userId_LdapInfo_id_fk": {
+          "name": "Settings_userId_LdapInfo_id_fk",
+          "tableFrom": "Settings",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Settings_userId_unique": {
+          "name": "Settings_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.StudentSites": {
+      "name": "StudentSites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'current'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "StudentSites_userId_LdapInfo_id_fk": {
+          "name": "StudentSites_userId_LdapInfo_id_fk",
+          "tableFrom": "StudentSites",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "StudentSites_userId_unique": {
+          "name": "StudentSites_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
