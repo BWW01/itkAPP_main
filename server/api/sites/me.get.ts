@@ -3,7 +3,7 @@ import { studentSites } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-    const session = await requireUserSession(event);
+    const { user } = await requireUserSession(event);
 
     const [site] = await db
         .select({
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
             category: studentSites.category,
         })
         .from(studentSites)
-        .where(eq(studentSites.userId, session.user.id));
+        .where(eq(studentSites.userId, user.id));
 
     return site ?? null;
 });

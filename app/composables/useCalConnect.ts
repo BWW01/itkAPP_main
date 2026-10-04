@@ -28,7 +28,7 @@ export function useCalConnect(
         saveError.value = ''
         try {
             const data = await $fetch<{ moodleLink: CalendarLink | null, neptunLink: CalendarLink | null }>(
-                `/api/calendar/getCalLinks?username=${username.value}`
+                `/api/calendar/links`
             )
             moodleLink.value = data?.moodleLink?.url || ''
             neptunLink.value = data?.neptunLink?.url || ''
@@ -42,8 +42,8 @@ export function useCalConnect(
         saveStatus.value = 'saving'
         saveError.value = ''
         try {
-            await $fetch('/api/calendar/importCalLinks', {
-                method: 'POST',
+            await $fetch('/api/calendar/links', {
+                method: 'PUT',
                 body: {
                     username: username.value,
                     neptunLink: neptunLink.value.trim() || null,

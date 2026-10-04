@@ -10,7 +10,7 @@ const bodySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-    const session = await requireUserSession(event);
+    const { user } = await requireUserSession(event);
 
     const parsed = bodySchema.safeParse(await readBody(event));
     if (!parsed.success) {
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     const [site] = await db
         .insert(studentSites)
         .values({
-            userId: session.user.id,
+            userId: user.id,
             ...parsed.data,
             updatedAt: new Date(),
         })

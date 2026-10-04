@@ -66,7 +66,7 @@ async function loadCalendar() {
     loading.value = true
     error.value = null
     try {
-        const icsString = await $fetch<string>(`/api/calendar/${username.value}`, {
+        const icsString = await $fetch<string>(`/api/calendar`, {
             headers: {Accept: 'text/calendar'}
         })
         events.value = parseIcsToEvents(icsString)

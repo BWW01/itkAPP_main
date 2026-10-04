@@ -4,7 +4,6 @@ import { db } from "../db";
 import { associations, ldapInfo } from "../db/schema";
 import { isDue } from "./interval";
 import { syncUserCalendar } from "./mergeIcs";
-import { checkAndSendNotifications } from "./notifications";
 import { createHash } from "node:crypto";
 
 const STAGGER_WINDOW_MS = 30 * 60 * 1000;
@@ -93,11 +92,5 @@ export function startSyncWorker() {
 
     new Cron("*/30 * * * *", () => {
         scheduleWindow();
-    });
-
-    new Cron("* * * * *", () => {
-        checkAndSendNotifications().catch((e) =>
-            console.error("[push] Értesítés küldési hiba:", e)
-        );
     });
 }

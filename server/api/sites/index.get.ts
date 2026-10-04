@@ -1,11 +1,11 @@
-import { db } from "../../db";
-import { studentSites } from "../../db/schema";
-import { desc } from "drizzle-orm";
+import {db} from "../../db";
+import {studentSites} from "../../db/schema";
+import {desc} from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
     await requireUserSession(event);
 
-    const sites = await db
+    return await db
         .select({
             userId: studentSites.userId,
             name: studentSites.name,
@@ -15,6 +15,4 @@ export default defineEventHandler(async (event) => {
         })
         .from(studentSites)
         .orderBy(desc(studentSites.updatedAt));
-
-    return sites;
 });

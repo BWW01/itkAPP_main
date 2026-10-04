@@ -78,11 +78,6 @@ export default defineNuxtConfig({
         ldapUrl: process.env.LDAP_URL,
         ldapBaseDn: process.env.LDAP_BASE_DN,
 
-        vapidPrivateKey: "",   // set via NUXT_VAPID_PRIVATE_KEY
-        vapidMailto: "",       // set via NUXT_VAPID_MAILTO
-        public: {
-            vapidPublicKey: "", // set via NUXT_PUBLIC_VAPID_PUBLIC_KEY
-        },
         session:{
           cookie: {
             sameSite: "none",

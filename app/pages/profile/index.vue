@@ -44,8 +44,6 @@ console.log('user:', JSON.stringify(user.value, null, 2))
             </List>
 
             <ProfileCalendarLinks/>
-            <ProfilePushNotifications/>
-
         </div>
     </div>
 </template>

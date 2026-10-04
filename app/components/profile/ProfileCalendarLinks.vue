@@ -20,7 +20,7 @@ async function load() {
         moodleLink: CalendarLink | null
         neptunLastSyncedAt: string | null
         moodleLastSyncedAt: string | null
-    }>(`/api/calendar/getCalLinks?username=${username.value}`)
+    }>(`/api/calendar/links`)
     neptunUrl.value = data?.neptunLink?.url ?? ''
     moodleUrl.value = data?.moodleLink?.url ?? ''
     neptunLastSync.value = data?.neptunLastSyncedAt ?? null
@@ -32,8 +32,8 @@ async function save() {
     calStatus.value = 'saving'
     calError.value = ''
     try {
-        await $fetch('/api/calendar/importCalLinks', {
-            method: 'POST',
+        await $fetch('/api/calendar/links', {
+            method: 'PUT',
             body: {
                 username: username.value,
                 neptunLink: neptunUrl.value.trim() || null,

@@ -41,9 +41,6 @@ async function syncCalendar() {
     // Meghívjuk az új API végpontot
     const response = await $fetch('/api/calendar/sync', {
       method: 'POST',
-      body: {
-        username: user.value.login // A login.post.ts-ben így mentetted el a sessionbe
-      }
     })
 
     // Siker esetén kiírjuk a backendről kapott üzenetet

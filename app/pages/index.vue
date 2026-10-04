@@ -31,7 +31,7 @@ const noCalendar = ref(false)
 onMounted(async () => {
     if (!u.value?.login) return
     try {
-        const ics = await $fetch<string>(`/api/calendar/${u.value.login}`, {
+        const ics = await $fetch<string>(`/api/calendar`, {
             headers: {Accept: 'text/calendar'}
         })
         events.value = parseIcsToEvents(ics)

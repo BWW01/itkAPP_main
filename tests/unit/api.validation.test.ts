@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest'
 
-// Test the URL validation logic extracted from importCalLinks.post.ts
+// Test the URL validation logic extracted from links.put.ts
 // This mirrors the server-side validateUrl function exactly
 
 function validateUrl(urlString: string | null | undefined): string | null {
