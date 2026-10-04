@@ -1,22 +1,14 @@
+import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import { associations } from "../../db/schema";
-import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-    const username = getRouterParam(event, "user");
-
-    if (!username) {
-        throw createError({ statusCode: 400, statusMessage: "Username required" });
-    }
+    const { user } = await requireUserSession(event);
 
     const association = await db.query.associations.findFirst({
-        where: eq(associations.ldapUsername, username),
+        where: eq(associations.ldapUsername, user.login),
         columns: { onboardingDone: true },
     });
 
-    if (!association) {
-        throw createError({ statusCode: 404, statusMessage: "User not found" });
-    }
-
-    return { onboardingDone: association.onboardingDone };
+    return { onboardingDone: association?.onboardingDone ?? false };
 });

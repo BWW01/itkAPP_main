@@ -1,12 +1,10 @@
 import { z } from "zod";
 import { db } from "../../db";
 import { studentSites } from "../../db/schema";
+import { ErrorCode } from "#shared/types/errorCodes";
 
 const bodySchema = z.object({
-    name: z.string().trim().min(1, "A név nem lehet üres.").max(50, "A név legfeljebb 50 karakter lehet."),
-    url: z.string().trim().url("Érvénytelen URL formátum."),
     tags: z.array(z.string().trim()),
-    category: z.enum(["og", "current", "wip"], {message: "Érvénytelen kategória."}),
 });
 
 export default defineEventHandler(async (event) => {
@@ -16,24 +14,21 @@ export default defineEventHandler(async (event) => {
     if (!parsed.success) {
         throw createError({
             statusCode: 400,
-            message: parsed.error.issues[0]?.message ?? "Adat feldolgozási hiba.",
+            data: { code: parsed.error.issues[0]?.message ?? ErrorCode.INVALID_BODY },
         });
     }
 
+    const values = {
+        ...parsed.data,
+        name: user.name,
+        url: `https://users.itk.ppke.hu/~${user.login}`,
+        updatedAt: new Date(),
+    };
+
     const [site] = await db
         .insert(studentSites)
-        .values({
-            userId: user.id,
-            ...parsed.data,
-            updatedAt: new Date(),
-        })
-        .onConflictDoUpdate({
-            target: studentSites.userId,
-            set: {
-                ...parsed.data,
-                updatedAt: new Date(),
-            },
-        })
+        .values({ userId: user.id, ...values })
+        .onConflictDoUpdate({ target: studentSites.userId, set: values })
         .returning({
             name: studentSites.name,
             url: studentSites.url,
