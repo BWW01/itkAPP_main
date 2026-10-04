@@ -1,53 +1,35 @@
-import { db } from "../../db";
-import { ldapInfo } from "../../db/schema";
+import { z } from "zod";
+import { ErrorCode } from "#shared/types/errorCodes";
+
+const bodySchema = z.object({
+    username: z.string().trim().min(1, ErrorCode.MISSING_CREDENTIALS),
+    password: z.string().min(1, ErrorCode.MISSING_CREDENTIALS),
+});
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody(event);
-    const username = body?.username;
-    const password = body?.password;
+    const parsed = bodySchema.safeParse(await readBody(event));
+    if (!parsed.success) {
+        throw createError({ statusCode: 400, data: { code: ErrorCode.MISSING_CREDENTIALS } });
+    }
+    const { username, password } = parsed.data;
 
-    if (!username || !password) {
-        throw createError({
-            statusCode: 400,
-            message: "Kérlek add meg a felhasználónevet és a jelszót!",
-        });
+    const ldapEntry = await ldapLogin(username, password);
+    if (!ldapEntry) {
+        throw createError({ statusCode: 401, data: { code: ErrorCode.INVALID_CREDENTIALS } });
     }
 
-    const user = await ldapLogin(username, password);
-    console.log("LDAP result:", user);
-
-
-    if (!user) {
-        throw createError({
-            statusCode: 401,
-            message: "Hibás felhasználónév vagy jelszó!",
-        });
-    }
-    const pick = (name: string): string | undefined => {
-        const key = Object.keys(user).find((k) => k.toLowerCase() === name.toLowerCase());
-        if (!key) return undefined;
-        const raw = (user as Record<string, unknown>)[key];
-        const v = Array.isArray(raw) ? raw[0] : raw;
-        if (v == null) return undefined;
-        const s = Buffer.isBuffer(v) ? v.toString("utf8") : String(v);
-        return s.trim() || undefined;
-    };
-
-    const familyName = pick("sn") ?? username;
-    const givenName = pick("givenName") ?? "";
-    const displayName = pick("displayName") ?? (`${familyName} ${givenName}`.trim() || username);
-    const email = pick("mail") ?? null;
-
-    const dbUser = await upsertLdapUser(user, username);
+    const user = await upsertLdapUser(ldapEntry, username);
 
     await setUserSession(event, {
         user: {
-            id: dbUser.id,
-            login: username,
-            email,
-            name: displayName,
+            id: user.id,
+            login: user.ldapUsername,
+            email: user.email,
+            name: user.fullName,
+            givenName: user.givenName,
+            familyName: user.familyName,
         },
     });
 
-    return { ok: true };
+    return null;
 });
