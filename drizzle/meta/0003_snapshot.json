@@ -1,0 +1,960 @@
+{
+  "id": "534402d0-b19e-4db1-8c35-719bbbcecdf0",
+  "prevId": "58819c62-ea10-4ffc-9749-b43045fce3e5",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Associations": {
+      "name": "Associations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "neptunLink": {
+          "name": "neptunLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLink": {
+          "name": "moodleLink",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extras": {
+          "name": "extras",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "mergedCalendarHash": {
+          "name": "mergedCalendarHash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "neptunLastSyncedAt": {
+          "name": "neptunLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moodleLastSyncedAt": {
+          "name": "moodleLastSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extrasLastSyncedAt": {
+          "name": "extrasLastSyncedAt",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "onboardingDone": {
+          "name": "onboardingDone",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Associations_ldapUsername_LdapInfo_ldapUsername_fk": {
+          "name": "Associations_ldapUsername_LdapInfo_ldapUsername_fk",
+          "tableFrom": "Associations",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "ldapUsername"
+          ],
+          "columnsTo": [
+            "ldapUsername"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Associations_ldapUsername_unique": {
+          "name": "Associations_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Curricula": {
+      "name": "Curricula",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalCreditsRequired": {
+          "name": "totalCreditsRequired",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Curricula_code_unique": {
+          "name": "Curricula_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "Curricula_totalCredits_positive": {
+          "name": "Curricula_totalCredits_positive",
+          "value": "\"Curricula\".\"totalCreditsRequired\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.CurriculumCategories": {
+      "name": "CurriculumCategories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "curriculumId": {
+          "name": "curriculumId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "curriculumCategporyType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "requiredCredits": {
+          "name": "requiredCredits",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sortOrder": {
+          "name": "sortOrder",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "CurriculumCategories_curriculumId_Curricula_id_fk": {
+          "name": "CurriculumCategories_curriculumId_Curricula_id_fk",
+          "tableFrom": "CurriculumCategories",
+          "tableTo": "Curricula",
+          "columnsFrom": [
+            "curriculumId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "CurriculumCategories_curriculum_name_unique": {
+          "name": "CurriculumCategories_curriculum_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "curriculumId",
+            "name"
+          ]
+        },
+        "CurriculumCategories_id_curriculum_unique": {
+          "name": "CurriculumCategories_id_curriculum_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id",
+            "curriculumId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "CurriculumCategories_requiredCredits_nonneg": {
+          "name": "CurriculumCategories_requiredCredits_nonneg",
+          "value": "\"CurriculumCategories\".\"requiredCredits\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.CurriculumSubjects": {
+      "name": "CurriculumSubjects",
+      "schema": "",
+      "columns": {
+        "curriculumId": {
+          "name": "curriculumId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creditsOverride": {
+          "name": "creditsOverride",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recommendedSemester": {
+          "name": "recommendedSemester",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "CurriculumSubjects_categoryId_idx": {
+          "name": "CurriculumSubjects_categoryId_idx",
+          "columns": [
+            {
+              "expression": "categoryId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "CurriculumSubjects_curriculumId_Curricula_id_fk": {
+          "name": "CurriculumSubjects_curriculumId_Curricula_id_fk",
+          "tableFrom": "CurriculumSubjects",
+          "tableTo": "Curricula",
+          "columnsFrom": [
+            "curriculumId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "CurriculumSubjects_subjectId_Subjects_id_fk": {
+          "name": "CurriculumSubjects_subjectId_Subjects_id_fk",
+          "tableFrom": "CurriculumSubjects",
+          "tableTo": "Subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "CurriculumSubjects_category_same_curriculum_fk": {
+          "name": "CurriculumSubjects_category_same_curriculum_fk",
+          "tableFrom": "CurriculumSubjects",
+          "tableTo": "CurriculumCategories",
+          "columnsFrom": [
+            "categoryId",
+            "curriculumId"
+          ],
+          "columnsTo": [
+            "id",
+            "curriculumId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "CurriculumSubjects_pk": {
+          "name": "CurriculumSubjects_pk",
+          "columns": [
+            "curriculumId",
+            "subjectId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "CurriculumSubjects_creditsOverride_nonneg": {
+          "name": "CurriculumSubjects_creditsOverride_nonneg",
+          "value": "\"CurriculumSubjects\".\"creditsOverride\" IS NULL OR \"CurriculumSubjects\".\"creditsOverride\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.LdapInfo": {
+      "name": "LdapInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ldapUsername": {
+          "name": "ldapUsername",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "familyName": {
+          "name": "familyName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "givenName": {
+          "name": "givenName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fullName": {
+          "name": "fullName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "eduPersonOrgUnitDN": {
+          "name": "eduPersonOrgUnitDN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ldapSyncedAt": {
+          "name": "ldapSyncedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "LdapInfo_ldapUsername_unique": {
+          "name": "LdapInfo_ldapUsername_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ldapUsername"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.PushSubscriptions": {
+      "name": "PushSubscriptions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endpoint": {
+          "name": "endpoint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "p256dh": {
+          "name": "p256dh",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auth": {
+          "name": "auth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "endpoint_idx": {
+          "name": "endpoint_idx",
+          "columns": [
+            {
+              "expression": "endpoint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "PushSubscriptions_userId_LdapInfo_id_fk": {
+          "name": "PushSubscriptions_userId_LdapInfo_id_fk",
+          "tableFrom": "PushSubscriptions",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Settings": {
+      "name": "Settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notificationTime": {
+          "name": "notificationTime",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 15
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Settings_userId_LdapInfo_id_fk": {
+          "name": "Settings_userId_LdapInfo_id_fk",
+          "tableFrom": "Settings",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Settings_userId_unique": {
+          "name": "Settings_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.StudentCurricula": {
+      "name": "StudentCurricula",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "curriculumId": {
+          "name": "curriculumId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "StudentCurricula_userId_LdapInfo_id_fk": {
+          "name": "StudentCurricula_userId_LdapInfo_id_fk",
+          "tableFrom": "StudentCurricula",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "StudentCurricula_curriculumId_Curricula_id_fk": {
+          "name": "StudentCurricula_curriculumId_Curricula_id_fk",
+          "tableFrom": "StudentCurricula",
+          "tableTo": "Curricula",
+          "columnsFrom": [
+            "curriculumId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "StudentCurricula_userId_unique": {
+          "name": "StudentCurricula_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.StudentSites": {
+      "name": "StudentSites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'current'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "StudentSites_userId_LdapInfo_id_fk": {
+          "name": "StudentSites_userId_LdapInfo_id_fk",
+          "tableFrom": "StudentSites",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "StudentSites_userId_unique": {
+          "name": "StudentSites_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.SubjectCompletions": {
+      "name": "SubjectCompletions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "semester": {
+          "name": "semester",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grade": {
+          "name": "grade",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "SubjectCompletions_userId_idx": {
+          "name": "SubjectCompletions_userId_idx",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "SubjectCompletions_userId_LdapInfo_id_fk": {
+          "name": "SubjectCompletions_userId_LdapInfo_id_fk",
+          "tableFrom": "SubjectCompletions",
+          "tableTo": "LdapInfo",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "SubjectCompletions_subjectId_Subjects_id_fk": {
+          "name": "SubjectCompletions_subjectId_Subjects_id_fk",
+          "tableFrom": "SubjectCompletions",
+          "tableTo": "Subjects",
+          "columnsFrom": [
+            "subjectId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "SubjectCompletions_user_subject_semester_unique": {
+          "name": "SubjectCompletions_user_subject_semester_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userId",
+            "subjectId",
+            "semester"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "SubjectCompletions_grade_range": {
+          "name": "SubjectCompletions_grade_range",
+          "value": "\"SubjectCompletions\".\"grade\" BETWEEN 1 AND 5"
+        },
+        "SubjectCompletions_semester_format": {
+          "name": "SubjectCompletions_semester_format",
+          "value": "\"SubjectCompletions\".\"semester\" ~ '^[0-9]{4}/[0-9]{2}/[12]$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.Subjects": {
+      "name": "Subjects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credits": {
+          "name": "credits",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Subjects_code_unique": {
+          "name": "Subjects_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "Subjects_credits_nonneg": {
+          "name": "Subjects_credits_nonneg",
+          "value": "\"Subjects\".\"credits\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.curriculumCategporyType": {
+      "name": "curriculumCategporyType",
+      "schema": "public",
+      "values": [
+        "MANDATORY",
+        "ELECTIVE",
+        "FREE_ELECTIVE",
+        "MANDATORY_FOR_SPECIALIZATION",
+        "ELECTIVE_FOR_SPECIALIZATION"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
