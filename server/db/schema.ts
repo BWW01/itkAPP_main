@@ -182,3 +182,15 @@ export const studentSites = pgTable("StudentSites", {
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 })
+
+export const midtermDates = pgTable("MidtermDates", {
+    id: serial("id").primaryKey(),
+    subjectId: integer("subjectId").notNull().references(() => subjects.id, {onDelete: "cascade"}),
+    createdBy: integer("createdBy").references(() => ldapInfo.id, {onDelete: "set null"}),
+    startsAt: timestamp("startsAt", { withTimezone: true }).notNull(),
+    location: text("location"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+    index("MidtermDates_subjectId_idx").on(t.subjectId),
+    index("MidtermDates_startsAt_idx").on(t.startsAt),
+])
