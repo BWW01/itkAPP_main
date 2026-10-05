@@ -1,3 +1,4 @@
+DROP TYPE IF EXISTS "public"."curriculumCategporyType";--> statement-breakpoint
 CREATE TYPE "public"."SubgroupType" AS ENUM('MANDATORY', 'ELECTIVE', 'FREE_ELECTIVE');--> statement-breakpoint
 CREATE TABLE "Curricula" (
                              "id" serial PRIMARY KEY NOT NULL,
@@ -90,5 +91,6 @@ ALTER TABLE "StudentCurricula" ADD CONSTRAINT "StudentCurricula_curriculumId_Cur
 ALTER TABLE "StudentCurricula" ADD CONSTRAINT "StudentCurricula_specialization_same_curriculum_fk" FOREIGN KEY ("specializationGroupId","curriculumId") REFERENCES "public"."CurriculumGroups"("id","curriculumId") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "SubjectCompletions" ADD CONSTRAINT "SubjectCompletions_userId_LdapInfo_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."LdapInfo"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "SubjectCompletions" ADD CONSTRAINT "SubjectCompletions_subjectId_Subjects_id_fk" FOREIGN KEY ("subjectId") REFERENCES "public"."Subjects"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "MidtermDates" ADD CONSTRAINT "MidtermDates_subjectId_Subjects_id_fk" FOREIGN KEY ("subjectId") REFERENCES "public"."Subjects"("id") ON DELETE cascade ON UPDATE no action NOT VALID;--> statement-breakpoint
 CREATE INDEX "CurriculumSubjects_subjectId_idx" ON "CurriculumSubjects" USING btree ("subjectId");--> statement-breakpoint
 CREATE INDEX "SubjectCompletions_userId_idx" ON "SubjectCompletions" USING btree ("userId");
