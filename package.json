@@ -52,6 +52,7 @@
     "vue-router": "^4.6.4",
     "web-push": "^3.6.7",
     "workbox-precaching": "^7.4.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zod": "^4.4.3"
   },
   "devDependencies": {
