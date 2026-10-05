@@ -106,7 +106,11 @@ async function saveCurriculum() {
         specializationGroupId: selectedSpecializationId.value,
       },
     })
-    await loadProgress()
+    selectedSubject.value = null
+    query.value = ''
+    hits.value = []
+    addError.value = ''
+    await reload()
   } catch (e) {
     curriculumError.value = errorText(e)
   } finally {
@@ -383,74 +387,75 @@ onMounted(async () => {
               </Badge>
             </ListContent>
           </List>
-        </template>
 
-        <!-- Teljesítés felvitele -->
-        <List>
-          <ListLabel title="Teljesítés felvitele"/>
-          <ListContent class="flex flex-col gap-0.5">
-            <ListItem static class="flex-col items-stretch gap-3">
-              <div class="space-y-1.5">
-                <Label>Tárgy (név vagy kód)</Label>
-                <Input v-model="query" placeholder="pl. analízis vagy P-ITMAT"/>
-                <div v-if="hits.length"
-                     class="max-h-64 overflow-y-auto rounded-xl border border-border">
-                  <button v-for="h in hits" :key="h.id" type="button"
-                          class="w-full text-left px-3 py-2 text-sm hover:bg-muted cursor-pointer"
-                          @click="pickSubject(h)">
-                    <span class="font-medium">{{ h.name }}</span>
-                    <span class="text-xs text-muted-foreground">
+          <!-- Teljesítés felvitele -->
+          <List>
+            <ListLabel title="Teljesítés felvitele"/>
+            <ListContent class="flex flex-col gap-0.5">
+              <ListItem static class="flex-col items-stretch gap-3">
+                <div class="space-y-1.5">
+                  <Label>Tárgy (név vagy kód)</Label>
+                  <Input v-model="query" placeholder="pl. analízis vagy P-ITMAT"/>
+                  <div v-if="hits.length"
+                       class="max-h-64 overflow-y-auto rounded-xl border border-border">
+                    <button v-for="h in hits" :key="h.id" type="button"
+                            class="w-full text-left px-3 py-2 text-sm hover:bg-muted cursor-pointer"
+                            @click="pickSubject(h)">
+                      <span class="font-medium">{{ h.name }}</span>
+                      <span class="text-xs text-muted-foreground">
                                             · {{ h.code }} · {{ h.credits }} kr<span v-if="h.requirementType"> · {{ h.requirementType }}</span>
                                         </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div class="grid gap-3 sm:grid-cols-2">
-                <div class="space-y-1.5">
-                  <Label>Félév</Label>
-                  <Input v-model="semester" placeholder="2025/26/1"/>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <div class="space-y-1.5">
+                    <Label>Félév</Label>
+                    <Input v-model="semester" placeholder="2025/26/1"/>
+                  </div>
+                  <div class="space-y-1.5">
+                    <Label>Jegy</Label>
+                    <select v-model="grade" :disabled="!selectedSubject"
+                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm disabled:opacity-50">
+                      <option v-for="g in gradeOptions" :key="String(g)" :value="g">
+                        {{ g === null ? 'Aláírás (jegy nélkül)' : g }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                <div class="space-y-1.5">
-                  <Label>Jegy</Label>
-                  <select v-model="grade" :disabled="!selectedSubject"
-                          class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm disabled:opacity-50">
-                    <option v-for="g in gradeOptions" :key="String(g)" :value="g">
-                      {{ g === null ? 'Aláírás (jegy nélkül)' : g }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <p v-if="addError" class="text-xs text-destructive">{{ addError }}</p>
-              <Button :disabled="!selectedSubject || adding" @click="addCompletion">
-                <RefreshCw v-if="adding" class="w-4 h-4 animate-spin"/>
-                <Plus v-else class="w-4 h-4"/>
-                Hozzáadás
-              </Button>
-            </ListItem>
-          </ListContent>
-        </List>
+                <p v-if="addError" class="text-xs text-destructive">{{ addError }}</p>
+                <Button :disabled="!selectedSubject || adding" @click="addCompletion">
+                  <RefreshCw v-if="adding" class="w-4 h-4 animate-spin"/>
+                  <Plus v-else class="w-4 h-4"/>
+                  Hozzáadás
+                </Button>
+              </ListItem>
+            </ListContent>
+          </List>
 
-        <!-- Rögzített teljesítések -->
-        <List>
-          <ListLabel title="Rögzített teljesítések" :description="`${completions.length} bejegyzés`"/>
-          <ListContent class="flex flex-col gap-0.5">
-            <ListItem v-if="!completions.length" static>
-              <span class="text-sm text-muted-foreground">Még nincs rögzített teljesítés.</span>
-            </ListItem>
-            <ListItem v-for="c in completions" :key="c.id" static>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-foreground truncate">{{ c.name }}</p>
-                <p class="text-xs text-muted-foreground">
-                  {{ c.code }} · {{ c.semester }} · {{ c.credits }} kr
-                </p>
-              </div>
-              <Badge :variant="c.grade === 1 ? 'destructive' : 'secondary'">{{ gradeLabel(c.grade) }}</Badge>
-              <Button variant="ghost" size="icon-sm" title="Törlés" @click="removeCompletion(c.id)">
-                <Trash2 class="w-4 h-4"/>
-              </Button>
-            </ListItem>
-          </ListContent>
-        </List>
+          <!-- Rögzített teljesítések -->
+          <List>
+            <ListLabel title="Rögzített teljesítések"
+                       :description="`${progress.curriculum.code} · ${completions.length} bejegyzés`"/>
+            <ListContent class="flex flex-col gap-0.5">
+              <ListItem v-if="!completions.length" static>
+                <span class="text-sm text-muted-foreground">Még nincs rögzített teljesítés.</span>
+              </ListItem>
+              <ListItem v-for="c in completions" :key="c.id" static>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-foreground truncate">{{ c.name }}</p>
+                  <p class="text-xs text-muted-foreground">
+                    {{ c.code }} · {{ c.semester }} · {{ c.credits }} kr
+                  </p>
+                </div>
+                <Badge :variant="c.grade === 1 ? 'destructive' : 'secondary'">{{ gradeLabel(c.grade) }}</Badge>
+                <Button variant="ghost" size="icon-sm" title="Törlés" @click="removeCompletion(c.id)">
+                  <Trash2 class="w-4 h-4"/>
+                </Button>
+              </ListItem>
+            </ListContent>
+          </List>
+        </template>
       </template>
 
     </div>

@@ -1,4 +1,4 @@
-import { and, asc, eq, gte, isNull, or } from "drizzle-orm";
+import { and, asc, eq, gte, isNull, or, sql } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import * as schema from "../schema";
 import {
@@ -21,10 +21,10 @@ import type {
 } from "../../../shared/types/absolutorium";
 
 export type Db = PgDatabase<PgQueryResultHKT, typeof schema>;
+
 export const PASSING_GRADE = 2;
 
 export const isPassing = (grade: number | null): boolean => grade === null || grade >= PASSING_GRADE;
-
 
 export interface CurriculumRow {
     id: number;
@@ -77,7 +77,6 @@ export interface SummarizeInput {
     attempts: AttemptRow[];
     specializationGroupId: number | null;
 }
-
 
 export function pickBestAttempts(attempts: AttemptRow[]): AttemptRow[] {
     const score = (a: AttemptRow) => a.grade ?? 0;
@@ -156,6 +155,16 @@ export function summarizeProgress(input: SummarizeInput): AbsolutoriumProgress {
         (bucket ?? uncategorized).push(entry);
     }
 
+    const ownEarned = new Map<number, number>(
+        activeSubgroups.map((s) => [
+            s.id,
+            (completedBySubgroup.get(s.id) ?? []).reduce((sum, x) => sum + x.credits, 0),
+        ]),
+    );
+    const overflowOf = (s: SubgroupRow): number =>
+        s.type === "ELECTIVE" ? Math.max(0, ownEarned.get(s.id)! - s.requiredCredits) : 0;
+    const totalOverflow = activeSubgroups.reduce((sum, s) => sum + overflowOf(s), 0);
+
     const byType: Record<SubgroupType, TypeTotals> = {
         MANDATORY: emptyTotals(),
         ELECTIVE: emptyTotals(),
@@ -164,7 +173,9 @@ export function summarizeProgress(input: SummarizeInput): AbsolutoriumProgress {
 
     const toSubgroupProgress = (s: SubgroupRow): SubgroupProgress => {
         const completed = (completedBySubgroup.get(s.id) ?? []).sort(bySemesterThenCode);
-        const earned = completed.reduce((sum, x) => sum + x.credits, 0);
+        const own = ownEarned.get(s.id)!;
+        const received = s === freeElective ? totalOverflow : 0;
+        const earned = own + received;
         const counted = Math.min(earned, s.requiredCredits);
 
         const missing: MissingSubject[] = s.type !== "MANDATORY" ? [] : (linksBySubgroup.get(s.id) ?? [])
@@ -181,7 +192,7 @@ export function summarizeProgress(input: SummarizeInput): AbsolutoriumProgress {
         const countOk = s.requiredCount === null || completed.length >= s.requiredCount;
 
         const t = byType[s.type];
-        t.earnedCredits += earned;
+        t.earnedCredits += own;
         t.requiredCredits += s.requiredCredits;
         t.countedCredits += counted;
 
@@ -195,11 +206,14 @@ export function summarizeProgress(input: SummarizeInput): AbsolutoriumProgress {
             countedCredits: counted,
             remainingCredits: s.requiredCredits - counted,
             completedCount: completed.length,
+            overflowCredits: overflowOf(s),
+            receivedOverflowCredits: received,
             isComplete: earned >= s.requiredCredits && missing.length === 0 && countOk,
             completed,
             missing,
         };
     };
+
     const groupProgress: GroupProgress[] = activeGroups.map((g) => {
         const subs = (subgroupsByGroup.get(g.id) ?? []).map(toSubgroupProgress);
         const earned = subs.reduce((sum, s) => sum + s.earnedCredits, 0);
@@ -243,6 +257,21 @@ export function summarizeProgress(input: SummarizeInput): AbsolutoriumProgress {
             && earnedTotal >= required
             && groupProgress.every((g) => g.isComplete),
     };
+}
+
+/** A tanterv tárgyai a tantervben érvényes kredittel (ha több helyen szerepel, a legnagyobbal). */
+export function curriculumSubjectCredits(db: Db, curriculumId: number) {
+    return db
+        .select({
+            subjectId: curriculumSubjects.subjectId,
+            credits: sql<number>`max(${curriculumSubjects.credits})`.as("curriculumCredits"),
+        })
+        .from(curriculumSubjects)
+        .innerJoin(curriculumSubgroups, eq(curriculumSubgroups.id, curriculumSubjects.subgroupId))
+        .innerJoin(curriculumGroups, eq(curriculumGroups.id, curriculumSubgroups.groupId))
+        .where(eq(curriculumGroups.curriculumId, curriculumId))
+        .groupBy(curriculumSubjects.subjectId)
+        .as("cs");
 }
 
 export async function getStudentCurriculum(db: Db, userId: number) {
@@ -325,12 +354,14 @@ export async function getAbsolutoriumProgress(db: Db, userId: number): Promise<A
             )),
     ]);
 
+    const inCurriculum = new Set(links.map((l) => l.subjectId));
+
     return summarizeProgress({
         curriculum,
         groups,
         subgroups,
         curriculumSubjects: links,
-        attempts,
+        attempts: attempts.filter((a) => inCurriculum.has(a.subjectId)),
         specializationGroupId,
     });
 }

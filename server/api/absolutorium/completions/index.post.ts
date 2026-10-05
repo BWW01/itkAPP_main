@@ -2,6 +2,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "../../../db";
 import { subjectCompletions, subjects } from "../../../db/schema";
+import { curriculumSubjectCredits, getStudentCurriculum } from "../../../db/queries/absolutorium";
 
 const bodySchema = z.object({
     subjectId: z.number().int().positive("Érvénytelen tárgy."),
@@ -34,12 +35,19 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, message: "Érvénytelen tanév (pl. 2025/26/1)." });
     }
 
+    const student = await getStudentCurriculum(db, session.user.id);
+    if (!student) {
+        throw createError({ statusCode: 400, message: "Előbb válassz tantervet." });
+    }
+
+    const cs = curriculumSubjectCredits(db, student.id);
     const [subject] = await db
         .select({ id: subjects.id, requirementType: subjects.requirementType })
         .from(subjects)
+        .innerJoin(cs, eq(cs.subjectId, subjects.id))
         .where(eq(subjects.id, subjectId));
     if (!subject) {
-        throw createError({ statusCode: 404, message: "Nincs ilyen tárgy." });
+        throw createError({ statusCode: 400, message: "Ez a tárgy nem szerepel a kiválasztott tantervben." });
     }
 
     const signatureOnly = subject.requirementType?.toLowerCase().startsWith("aláírás") ?? false;
