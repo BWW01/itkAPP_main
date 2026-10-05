@@ -1,5 +1,4 @@
-// server/api/auth/logout.post.ts
-export default defineEventHandler((event) => {
-    deleteCookie(event, "auth_token");
-    return { ok: true };
+export default defineEventHandler(async (event) => {
+    await clearUserSession(event);
+    return null;
 });

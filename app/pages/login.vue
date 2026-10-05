@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {GraduationCap} from "lucide-vue-next";
+import {errorMessage} from "~/utils/errorMessage";
 
 const {fetch: refreshSession} = useUserSession();
 definePageMeta({
@@ -28,8 +29,7 @@ async function onSubmit() {
         await refreshSession();
         await navigateTo("/");
     } catch (e: any) {
-        error.value =
-            e?.data?.message ?? "Érvénytelen felhasználónév vagy jelszó.";
+      error.value = errorMessage(e);
     } finally {
         loading.value = false;
     }
