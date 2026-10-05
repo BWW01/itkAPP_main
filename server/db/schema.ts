@@ -1,6 +1,6 @@
 import {
-    bigint, boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable,
-    primaryKey, serial, smallint, text, timestamp, unique, uniqueIndex, uuid,
+    boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable,
+    primaryKey, serial, smallint, text, timestamp, unique, uniqueIndex,
 } from "drizzle-orm/pg-core";
 import type {CalendarLink} from "#shared/types/calendar";
 import {sql} from "drizzle-orm";
@@ -211,4 +211,13 @@ export const midtermDates = pgTable("MidtermDates", {
 }, (t) => [
     index("MidtermDates_subjectId_idx").on(t.subjectId),
     index("MidtermDates_startsAt_idx").on(t.startsAt),
+])
+
+export const userRole = pgEnum("UserRole", ["COHORT_REP"]);
+export const userRoles = pgTable("UserRoles", {
+    userId: integer("userId").notNull().references(() => ldapInfo.id, {onDelete: "cascade"}),
+    role: userRole("role").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+    primaryKey({name: "UserRoles_pk", columns: [t.userId, t.role]})
 ])

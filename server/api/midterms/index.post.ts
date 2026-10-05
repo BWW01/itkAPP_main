@@ -3,6 +3,7 @@ import { db } from "../../db";
 import {midtermDates, subjects} from "../../db/schema";
 import { ErrorCode } from "#shared/types/errorCodes";
 import {eq} from "drizzle-orm";
+import {requireMidtermModerator} from "#server/utils/roles";
 
 const bodySchema = z.object({
     subjectId: z.number().int().positive(),
@@ -11,7 +12,7 @@ const bodySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event);
+    const { user } = await requireMidtermModerator(event);
 
     const parsed = bodySchema.safeParse(await readBody(event));
     if (!parsed.success) {

@@ -43,6 +43,13 @@
       "when": 1791196947959,
       "tag": "0005_closed_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791222675316,
+      "tag": "0006_amazing_pet_avengers",
+      "breakpoints": true
     }
   ]
 }
