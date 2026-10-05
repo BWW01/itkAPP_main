@@ -13,8 +13,8 @@ export const curriculumCategoryType = pgEnum("curriculumCategporyType",[
     "MANDATORY_FOR_SPECIALIZATION", //KÖTELEZŐ SPECEN
     "ELECTIVE_FOR_SPECIALIZATION"   //SZABVÁL SPECEN
 ]);
+export const subgroupType = pgEnum("SubgroupType", ["MANDATORY", "ELECTIVE", "FREE_ELECTIVE"]);
 export type SubgroupType = (typeof subgroupType.enumValues)[number];
-
 
 export const curricula = pgTable("Curricula", {
     id: serial("id").primaryKey(),

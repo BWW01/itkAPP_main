@@ -8,9 +8,10 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:generate": "drizzle-kit generate --config=drizzle.config.ts",
-    "db:migrate": "drizzle-kit migrate --config=drizzle.config.ts",
-    "db:studio": "drizzle-kit studio --config=drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config=drizzle.config.json",
+    "db:migrate": "drizzle-kit migrate --config=drizzle.config.json",
+    "db:migrate:local": "drizzle-kit migrate --config=drizzle.local.config.json",
+    "db:studio": "drizzle-kit studio --config=drizzle.local.config.json",
     "test": "vitest",
     "test:unit": "vitest --project unit",
     "test:nuxt": "vitest --project nuxt"
