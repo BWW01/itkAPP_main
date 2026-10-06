@@ -1,6 +1,6 @@
 services:
   app:
-    image: felhasznalonev/sajat-nuxt-app:latest
+    image: bww01/itkapp_main:latest
     command: >
       sh -c "bun /app/scripts/migrate.ts &&
       bun .output/server/index.mjs"
@@ -10,6 +10,8 @@ services:
       NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD}
       NUXT_JWT_SECRET: ${NUXT_JWT_SECRET}
       NUXT_JWT_EXPIRES_IN: ${NUXT_JWT_EXPIRES_IN:-8h}
+      LDAP_URL: ${LDAP_URL}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
       CALENDARS_DIR: /data/calendars
     volumes:
       - ./data/calendars:/data/calendars
