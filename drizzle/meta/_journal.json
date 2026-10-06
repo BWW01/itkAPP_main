@@ -50,6 +50,13 @@
       "when": 1791222675316,
       "tag": "0006_amazing_pet_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791288570511,
+      "tag": "0007_dry_riptide",
+      "breakpoints": true
     }
   ]
 }

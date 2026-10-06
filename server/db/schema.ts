@@ -16,6 +16,27 @@ export const curriculumCategoryType = pgEnum("curriculumCategporyType",[
 export const subgroupType = pgEnum("SubgroupType", ["MANDATORY", "ELECTIVE", "FREE_ELECTIVE"]);
 export type SubgroupType = (typeof subgroupType.enumValues)[number];
 
+export const onlineVideos = pgTable(
+    "OnlineVideos",
+    {
+        id: serial("id").primaryKey(),
+        legacyId: integer("legacyId").unique(),
+        semester: text("semester").notNull(),
+        semesterOrder: integer("semesterOrder").notNull(),
+        subject: text("subject").notNull(),
+        title: text("title").notNull(),
+        uploader: text("uploader"),
+        url: text("url").notNull(),
+        youtubeId: text("youtubeId"),
+        createdAt: timestamp("createdAt").defaultNow().notNull(),
+        updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdate(() => new Date()),
+    },
+    (table) => [
+        index("online_videos_semester_subject_idx").on(table.semester, table.subject),
+        index("online_videos_subject_idx").on(table.subject),
+    ]
+);
+
 export const curricula = pgTable("Curricula", {
     id: serial("id").primaryKey(),
     code: text("code").notNull().unique(),
