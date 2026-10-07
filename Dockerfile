@@ -8,6 +8,7 @@ RUN bun run build
 FROM oven/bun:alpine
 WORKDIR /app
 
+COPY --from=builder /app/server/utils/onlineVideos.ts ./server/utils/onlineVideos.ts
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/drizzle.config.json ./drizzle.config.json
