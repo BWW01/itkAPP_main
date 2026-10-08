@@ -77,7 +77,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         ldapUrl: process.env.LDAP_URL,
         ldapBaseDn: process.env.LDAP_BASE_DN,
-        adminUsers: "",
+        adminUsers: process.env.ADMIN_USERS,
 
         session:{
           cookie: {
