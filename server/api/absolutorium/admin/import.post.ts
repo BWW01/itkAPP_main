@@ -3,6 +3,7 @@ import { db } from "../../../db";
 import { readSheetRows } from "../../../db/import/readSheet";
 import { CurriculumParseError, parseCurriculumSheet } from "../../../db/import/parseCurriculumSheet";
 import { importCurriculum } from "../../../db/import/importCurriculum";
+import {requireAdmin} from "#server/utils/admin";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
