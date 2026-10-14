@@ -1,9 +1,14 @@
 FROM oven/bun:alpine AS builder
 WORKDIR /app
 COPY package.json bun.lock ./
-RUN bun install
+RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
+
+FROM oven/bun:alpine AS prod-deps
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production
 
 FROM oven/bun:alpine
 WORKDIR /app
@@ -13,7 +18,7 @@ COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/drizzle.config.json ./drizzle.config.json
 COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/server/db/schema.ts ./server/db/schema.ts
 
 EXPOSE 3000
