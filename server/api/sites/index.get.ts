@@ -1,6 +1,6 @@
 import {db} from "../../db";
-import {studentSites} from "../../db/schema";
-import {desc} from "drizzle-orm";
+import {studentSites, ldapInfo} from "../../db/schema";
+import {desc, eq} from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
     await requireUserSession(event);
@@ -8,11 +8,12 @@ export default defineEventHandler(async (event) => {
     return await db
         .select({
             userId: studentSites.userId,
-            name: studentSites.name,
+            name: ldapInfo.fullName,
             url: studentSites.url,
             tags: studentSites.tags,
             category: studentSites.category,
         })
         .from(studentSites)
+        .innerJoin(ldapInfo, eq(studentSites.userId, ldapInfo.id))
         .orderBy(desc(studentSites.updatedAt));
 });

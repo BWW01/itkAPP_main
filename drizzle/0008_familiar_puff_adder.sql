@@ -1,0 +1,1 @@
+ALTER TABLE "StudentSites" DROP COLUMN "name";

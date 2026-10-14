@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { studentSites } from "../../db/schema";
+import { ldapInfo, studentSites } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
@@ -7,12 +7,13 @@ export default defineEventHandler(async (event) => {
 
     const [site] = await db
         .select({
-            name: studentSites.name,
+            name: ldapInfo.fullName,
             url: studentSites.url,
             tags: studentSites.tags,
             category: studentSites.category,
         })
         .from(studentSites)
+        .innerJoin(ldapInfo, eq(studentSites.userId, ldapInfo.id))
         .where(eq(studentSites.userId, user.id));
 
     return site ?? null;

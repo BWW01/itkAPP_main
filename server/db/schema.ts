@@ -214,7 +214,6 @@ export const studentSites = pgTable("StudentSites", {
         .notNull()
         .unique()
         .references(() => ldapInfo.id, {onDelete: "cascade"}),
-    name: text("name").notNull(),
     url: text("url").notNull(),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     category: text("category").notNull().default("current"), // 'og' | 'current' | 'wip'

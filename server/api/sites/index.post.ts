@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
 
     const values = {
         ...parsed.data,
-        name: user.name,
         url: `https://users.itk.ppke.hu/~${user.login}`,
         updatedAt: new Date(),
     };
@@ -30,11 +29,10 @@ export default defineEventHandler(async (event) => {
         .values({ userId: user.id, ...values })
         .onConflictDoUpdate({ target: studentSites.userId, set: values })
         .returning({
-            name: studentSites.name,
             url: studentSites.url,
             tags: studentSites.tags,
             category: studentSites.category,
         });
 
-    return site;
+    return {...site, name: user.name};
 });
