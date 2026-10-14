@@ -1,5 +1,12 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   app:
+    logging: *default-logging
     image: bww01/itkapp_main:latest
     command: >
       sh -c "bun /app/scripts/migrate.ts &&
@@ -19,7 +26,8 @@ services:
         condition: service_healthy
 
   caddy:
-    image: caddy:alpine
+    logging: *default-logging
+    image: caddy:2-alpine
     restart: unless-stopped
     ports:
       - "80:80"
@@ -32,6 +40,7 @@ services:
       - app
 
   db:
+    logging: *default-logging
     image: postgres:17
     restart: always
     environment:
