@@ -74,9 +74,10 @@ export default defineNuxtConfig({
     },
 
     // Env variables
+    // These are set in the .env file and will be set automatically in runtime by computing the actual names from the camelcase names in the runtimeConfig object below
     runtimeConfig: {
-        ldapUrl: process.env.LDAP_URL,
-        ldapBaseDn: process.env.LDAP_BASE_DN,
+        ldapUrl: "",
+        ldapBaseDn: "",
         adminUsers: "",
 
         session:{
