@@ -23,3 +23,6 @@ logs
 .env.*
 !.env.example
 .env
+
+# Playwright test results
+test-resultstest-results/
