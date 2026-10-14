@@ -4,6 +4,10 @@ on:
   push:
     branches: [ "main" ]
 
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,7 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Ez a lépés segít a modernebb Docker buildek kezelésében
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -26,13 +29,28 @@ jobs:
         with:
           context: .
           push: true
-          tags: bww01/itkapp_main:latest
-          # A cache sorokat töröltem, hogy ne ezen bukjon el a folyamat
+          tags: |
+            bww01/itkapp_main:latest
+            bww01/itkapp_main:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy compose file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: marri1
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"
+          target: "/opt/itkapp2"
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -41,7 +59,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/itkapp2
-            # Biztos ami biztos, itt is lépjünk be a Dockerbe, ha az image privát
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker compose pull app
             docker compose up -d
+            docker image prune -f
