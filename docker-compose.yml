@@ -6,7 +6,7 @@ services:
       bun .output/server/index.mjs"
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://user:12345@db:5432/user_data
+      DATABASE_URL: postgresql://user:${POSTGRES_PASSWORD}@db:5432/user_data
       NUXT_ADMIN_USERS: ${ADMIN_USERS}
       NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD}
       NUXT_JWT_SECRET: ${NUXT_JWT_SECRET}
@@ -38,10 +38,10 @@ services:
     restart: always
     environment:
       POSTGRES_USER: user
-      POSTGRES_PASSWORD: 12345
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: user_data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
