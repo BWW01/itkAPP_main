@@ -32,8 +32,6 @@ jobs:
           tags: |
             bww01/itkapp_main:latest
             bww01/itkapp_main:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   deploy:
     needs: build
