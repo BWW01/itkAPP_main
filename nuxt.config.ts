@@ -80,6 +80,7 @@ export default defineNuxtConfig({
         adminUsers: "",
 
         session:{
+          password: "",
           cookie: {
             sameSite: "none",
             secure: true,
