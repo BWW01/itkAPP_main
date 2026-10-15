@@ -6,7 +6,6 @@ export default defineNuxtConfig({
     modules: [
         "@nuxt/icon",
         "@nuxt/image",
-        "@nuxt/eslint",
         "@nuxtjs/tailwindcss",
         "shadcn-nuxt",
         "@vueuse/nuxt",
@@ -86,15 +85,6 @@ export default defineNuxtConfig({
             secure: true,
           },
         },
-    },
-
-    // ESLint config
-    eslint: {
-        config: {
-            nuxt: {
-                sortConfigKeys: true
-            }
-        }
     },
 
     // ShadCN Settings
