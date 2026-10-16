@@ -17,7 +17,7 @@ COPY --from=builder /app/server/utils/onlineVideos.ts ./server/utils/onlineVideo
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/server/db/schema.ts ./server/db/schema.ts
 
 EXPOSE 3000
