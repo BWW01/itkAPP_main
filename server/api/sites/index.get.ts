@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
             name: sql<string>`COALESCE(${ldapInfo.fullName}, ${studentSites.legacyName}, ${studentSites.login})`,
             url: studentSites.url,
             tags: studentSites.tags,
-            category: studentSites.category,
+            claimed: sql<boolean>`${studentSites.userId} is not null`,
         })
         .from(studentSites)
         .leftJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))
