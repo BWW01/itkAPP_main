@@ -211,9 +211,10 @@ export const settings = pgTable("Settings", {
 export const studentSites = pgTable("StudentSites", {
     id: serial("id").primaryKey(),
     userId: integer("userId")
-        .notNull()
         .unique()
-        .references(() => ldapInfo.id, {onDelete: "cascade"}),
+        .references(() => ldapInfo.id, {onDelete: "set null"}),
+    login: text("login").notNull().unique(),
+    legacyName: text("legacyName"),
     url: text("url").notNull(),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     category: text("category").notNull().default("current"), // 'og' | 'current' | 'wip'

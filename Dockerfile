@@ -22,4 +22,4 @@ COPY --from=builder /app/server/db/schema.ts ./server/db/schema.ts
 
 EXPOSE 3000
 
-CMD ["bun", ".output/server/index.mjs"]
+CMD ["bun", ".output/server/index.mjs"] 

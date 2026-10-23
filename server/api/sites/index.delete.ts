@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event);
 
-    await db.delete(studentSites).where(eq(studentSites.userId, user.id));
+    await db.delete(studentSites).where(eq(studentSites.login, user.login));
 
     return { ok: true };
 });

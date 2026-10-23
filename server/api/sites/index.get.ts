@@ -1,19 +1,19 @@
 import {db} from "../../db";
 import {studentSites, ldapInfo} from "../../db/schema";
-import {desc, eq} from "drizzle-orm";
+import {desc, eq, sql} from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
     await requireUserSession(event);
 
     return await db
         .select({
-            userId: studentSites.userId,
-            name: ldapInfo.fullName,
+            login: studentSites.login,
+            name: sql<string>`COALESCE(${ldapInfo.fullName}, ${studentSites.legacyName}, ${studentSites.login})`,
             url: studentSites.url,
             tags: studentSites.tags,
             category: studentSites.category,
         })
         .from(studentSites)
-        .innerJoin(ldapInfo, eq(studentSites.userId, ldapInfo.id))
+        .leftJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))
         .orderBy(desc(studentSites.updatedAt));
 });

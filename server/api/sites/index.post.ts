@@ -18,16 +18,20 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    const values = {
-        ...parsed.data,
-        url: `https://users.itk.ppke.hu/~${user.login}`,
-        updatedAt: new Date(),
-    };
-
     const [site] = await db
         .insert(studentSites)
-        .values({ userId: user.id, ...values })
-        .onConflictDoUpdate({ target: studentSites.userId, set: values })
+        .values({ 
+            login: user.login,
+            userId: user.id,
+            tags: parsed.data.tags,
+            url: `https://users.itk.ppke.hu/~${user.login}`,
+            updatedAt: new Date(),
+        })
+        .onConflictDoUpdate({ target: studentSites.userId, set: {
+            userId: user.id,
+            tags: parsed.data.tags,
+            updatedAt: new Date(),
+        }})
         .returning({
             url: studentSites.url,
             tags: studentSites.tags,

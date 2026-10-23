@@ -13,8 +13,8 @@ export default defineEventHandler(async (event) => {
             category: studentSites.category,
         })
         .from(studentSites)
-        .innerJoin(ldapInfo, eq(studentSites.userId, ldapInfo.id))
-        .where(eq(studentSites.userId, user.id));
+        .innerJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))
+        .where(eq(studentSites.login, user.login));
 
     return site ?? null;
 });
