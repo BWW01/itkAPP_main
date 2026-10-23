@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
             url: `https://users.itk.ppke.hu/~${user.login}`,
             updatedAt: new Date(),
         })
-        .onConflictDoUpdate({ target: studentSites.userId, set: {
+        .onConflictDoUpdate({ target: studentSites.login, set: {
             userId: user.id,
             tags: parsed.data.tags,
             updatedAt: new Date(),
