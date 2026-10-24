@@ -71,6 +71,13 @@
       "when": 1792754758311,
       "tag": "0009_thin_magneto",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792836685588,
+      "tag": "0010_jazzy_micromacro",
+      "breakpoints": true
     }
   ]
 }

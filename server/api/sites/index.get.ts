@@ -12,8 +12,10 @@ export default defineEventHandler(async (event) => {
             url: studentSites.url,
             tags: studentSites.tags,
             claimed: sql<boolean>`${studentSites.userId} is not null`,
+            isPhpEnabled: studentSites.isPhpEnabled,
         })
         .from(studentSites)
         .leftJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))
+        .where(eq(studentSites.isPublic, true))
         .orderBy(desc(studentSites.updatedAt));
 });

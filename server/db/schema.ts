@@ -220,6 +220,8 @@ export const studentSites = pgTable("StudentSites", {
     category: text("category").notNull().default("current"), // 'og' | 'current' | 'wip'
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+    isPublic: boolean("isPublic").notNull().default(true),
+    isPhpEnabled: boolean("isPhpEnabled").notNull().default(false),
 })
 
 export const midtermDates = pgTable("MidtermDates", {

@@ -5,6 +5,8 @@ import { ErrorCode } from "#shared/types/errorCodes";
 
 const bodySchema = z.object({
     tags: z.array(z.string().trim()),
+    isPublic: z.boolean().optional(),
+    isPhpEnabled: z.boolean().optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -24,18 +26,23 @@ export default defineEventHandler(async (event) => {
             login: user.login,
             userId: user.id,
             tags: parsed.data.tags,
+            isPublic: parsed.data.isPublic ?? true,
+            isPhpEnabled: parsed.data.isPhpEnabled ?? false,
             url: `https://users.itk.ppke.hu/~${user.login}`,
             updatedAt: new Date(),
         })
         .onConflictDoUpdate({ target: studentSites.login, set: {
             userId: user.id,
             tags: parsed.data.tags,
+            isPublic: parsed.data.isPublic ?? true,
+            isPhpEnabled: parsed.data.isPhpEnabled ?? false,
             updatedAt: new Date(),
         }})
         .returning({
             url: studentSites.url,
             tags: studentSites.tags,
-            category: studentSites.category,
+            isPublic: studentSites.isPublic,
+            isPhpEnabled: studentSites.isPhpEnabled,
         });
 
     return {...site, name: user.name};
