@@ -100,6 +100,28 @@ export async function syncUserCalendar(
         .where(eq(associations.ldapUsername, ldapUsername));
     if (!assoc) return null;
 
+    const hasAnySource =
+    !!assoc.neptunLink?.url ||
+    !!assoc.moodleLink?.url ||
+    (assoc.extras?.length ?? 0) > 0;
+
+    // No sources configured: replace the old merged file with an empty calendar.
+    if (!hasAnySource) {
+        const empty = mergeIcs([]);
+        const newHash = hashContent(empty);
+        if (newHash === assoc.mergedCalendarHash) {
+            return {changed: false, userId: user.id};
+        }
+        const userDir = path.join(CALENDARS_DIR, String(user.id));
+        await mkdir(userDir, {recursive: true});
+        await writeFile(path.join(userDir, "calendar.ics"), empty, "utf-8");
+        await db
+            .update(associations)
+            .set({mergedCalendarHash: newHash})
+            .where(eq(associations.ldapUsername, ldapUsername));
+        return {changed: true, userId: user.id};
+    }
+
     const sources: string[] = [];
     const now = new Date();
     const updates: Partial<typeof associations.$inferInsert> = {};
