@@ -183,6 +183,8 @@ export const associations = pgTable("Associations", {
 });
 
 // not used yet
+//export const syncIntervals = ["1h", "6h", "1d"] as const;
+export const syncInterval = pgEnum("SyncInterval", ["1h", "6h", "1d"]);
 export const calendarLinks = pgTable("CalendarLinks", {
     id: serial("id").primaryKey(),
     userId: integer("userId")
@@ -190,14 +192,13 @@ export const calendarLinks = pgTable("CalendarLinks", {
         .references(() => ldapInfo.id, {onDelete: "cascade"}),
     name: text("name").notNull(),
     url: text("url").notNull(),
-    syncInterval: text("syncInterval").notNull().default("1d"), // "1h" | "6h" | "1d"
+    syncInterval: syncInterval("syncInterval").notNull().default("1d"),
     lastSyncedAt: timestamp("lastSyncedAt"),
     lastError: text("lastError"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [
     index("calendarLinks_userId_idx").on(table.userId),
     unique("calendarLinks_user_url_unique").on(table.userId, table.url),
-    check("calendarLinks_syncInterval_valid", sql`${table.syncInterval} IN ('1h', '6h', '1d')`),
 ]);
 
 export const pushSubscriptions = pgTable(

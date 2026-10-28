@@ -85,6 +85,20 @@
       "when": 1793216540791,
       "tag": "0011_elite_white_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793222944545,
+      "tag": "0012_fancy_joshua_kane",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793223013465,
+      "tag": "0013_harsh_gambit",
+      "breakpoints": true
     }
   ]
 }

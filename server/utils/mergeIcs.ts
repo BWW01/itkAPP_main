@@ -42,7 +42,7 @@ function extractTimezones(ics: string): Map<string, string> {
     const matches = ics.match(regex) || [];
     for (const tz of matches) {
         const tzidMatch = tz.match(/TZID:(.+)/);
-        if (tzidMatch) tzMap.set(tzidMatch[1].trim(), tz);
+        if (tzidMatch) tzMap.set(tzidMatch[1]!.trim(), tz);
     }
     return tzMap;
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "CalendarLinks" DROP CONSTRAINT "calendarLinks_syncInterval_valid";
