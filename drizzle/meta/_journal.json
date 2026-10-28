@@ -78,6 +78,13 @@
       "when": 1792836685588,
       "tag": "0010_jazzy_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793216540791,
+      "tag": "0011_elite_white_tiger",
+      "breakpoints": true
     }
   ]
 }
