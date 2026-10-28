@@ -1,1 +1,1 @@
-ALTER TABLE "CalendarLinks" DROP CONSTRAINT "calendarLinks_syncInterval_valid";
+ALTER TABLE "CalendarLinks" DROP CONSTRAINT IF EXISTS "calendarLinks_syncInterval_valid";
