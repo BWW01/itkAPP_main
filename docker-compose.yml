@@ -5,13 +5,6 @@ x-logging: &default-logging
     max-file: "3"
 
 services:
-  wiki-php:
-    image: php:8.3-fpm-alpine
-    restart: unless-stopped
-    volumes:
-      - ./perpa4:/var/www/html/perpa4
-    logging: *default-logging
-
   app:
     logging: *default-logging
     image: bww01/itkapp_main:latest
@@ -43,7 +36,6 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-      - ./perpa4:/var/www/html/perpa4
     depends_on:
       - app
 
