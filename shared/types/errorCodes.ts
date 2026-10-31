@@ -17,4 +17,5 @@ export const ErrorCode = {
     LINK_NOT_FOUND: "LINK_NOT_FOUND",
     INVALID_ID: "INVALID_ID",
     ENDPOINT_REMOVED: "ENDPOINT_REMOVED",
+    INVALID_TYPE: "INVALID_TYPE",
 } as const;

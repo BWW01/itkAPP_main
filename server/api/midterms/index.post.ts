@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "../../db";
-import {midtermDates, subjects} from "../../db/schema";
+import {midtermDates, midtermType, subjects} from "../../db/schema";
 import { ErrorCode } from "#shared/types/errorCodes";
 import {eq} from "drizzle-orm";
 import {requireMidtermModerator} from "#server/utils/roles";
@@ -9,6 +9,7 @@ const bodySchema = z.object({
     subjectId: z.number().int().positive(),
     startsAt: z.coerce.date(),
     location: z.string().trim().min(1).max(100).optional(),
+    type: z.enum(midtermType.enumValues, ErrorCode.INVALID_TYPE).default("MIDTERM"),
 });
 
 export default defineEventHandler(async (event) => {
