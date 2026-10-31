@@ -24,5 +24,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 404, data: { code: ErrorCode.LINK_NOT_FOUND } });
     }
 
+    syncUserCalendar(user.login).catch((e) => console.error("[sync] after change failed:", e));
+
     return { id: deleted.id };
 });
