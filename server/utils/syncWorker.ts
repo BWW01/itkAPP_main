@@ -1,7 +1,7 @@
 import { Cron } from "croner";
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { associations, ldapInfo } from "../db/schema";
+import { associations, calendarLinks, ldapInfo } from "../db/schema";
 import { isDue } from "./interval";
 import { syncUserCalendar } from "./mergeIcs";
 import { createHash } from "node:crypto";
@@ -16,42 +16,19 @@ function getUserOffset(userId: number): number {
     return numeric % STAGGER_WINDOW_MS;
 }
 
-async function runUserSyncIfDue(ldapUsername: string) {
-    const [assoc] = await db
-        .select()
-        .from(associations)
-        .where(eq(associations.ldapUsername, ldapUsername));
-    if (!assoc) return;
+async function runUserSyncIfDue(userId: number, ldapUsername: string) {
+    const links = await db
+        .select({ lastSyncedAt: calendarLinks.lastSyncedAt, syncInterval: calendarLinks.syncInterval })
+        .from(calendarLinks)
+        .where(eq(calendarLinks.userId, userId));
 
-    const syncNeptun =
-        !!assoc.neptunLink?.url &&
-        isDue(assoc.neptunLastSyncedAt, assoc.neptunLink.syncInterval);
+    const dueCount = links.filter((l) => isDue(l.lastSyncedAt, l.syncInterval)).length;
+    if (dueCount === 0) return;
 
-    const syncMoodle =
-        !!assoc.moodleLink?.url &&
-        isDue(assoc.moodleLastSyncedAt, assoc.moodleLink.syncInterval);
-
-    const syncExtraUrls = (assoc.extras || [])
-        .filter((e) => {
-            const last = assoc.extrasLastSyncedAt?.[e.url]
-                ? new Date(assoc.extrasLastSyncedAt[e.url])
-                : null;
-            return isDue(last, e.syncInterval);
-        })
-        .map((e) => e.url);
-
-    if (!syncNeptun && !syncMoodle && syncExtraUrls.length === 0) return;
-
-    console.log(
-        `[sync] ${ldapUsername} neptun=${syncNeptun} moodle=${syncMoodle} extras=${syncExtraUrls.length}`
-    );
+    console.log(`[sync] ${ldapUsername} ${dueCount}/${links.length} links due`);
 
     try {
-        const result = await syncUserCalendar(ldapUsername, {
-            syncNeptun,
-            syncMoodle,
-            syncExtraUrls,
-        });
+        const result = await syncUserCalendar(ldapUsername);
         if (result?.changed) {
             console.log(`[sync] ${ldapUsername} calendar updated`);
         }
@@ -63,17 +40,14 @@ async function runUserSyncIfDue(ldapUsername: string) {
 async function scheduleWindow() {
     try {
         const users = await db
-            .select({ id: ldapInfo.id, ldapUsername: ldapInfo.ldapUsername })
+            .selectDistinct({ id: ldapInfo.id, ldapUsername: ldapInfo.ldapUsername })
             .from(ldapInfo)
-            .innerJoin(
-                associations,
-                eq(associations.ldapUsername, ldapInfo.ldapUsername)
-            );
+            .innerJoin(calendarLinks, eq(calendarLinks.userId, ldapInfo.id));
 
         for (const user of users) {
             const offset = getUserOffset(user.id);
             setTimeout(() => {
-                runUserSyncIfDue(user.ldapUsername).catch((e) =>
+                runUserSyncIfDue(user.id, user.ldapUsername).catch((e) =>
                     console.error("[sync] user error:", e)
                 );
             }, offset);
