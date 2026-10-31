@@ -2,7 +2,6 @@ import {
     boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable,
     primaryKey, serial, smallint, text, timestamp, unique, uniqueIndex,
 } from "drizzle-orm/pg-core";
-import type {CalendarLink} from "#shared/types/calendar";
 import {sql} from "drizzle-orm";
 export type LdapRawAttributes = Record<string, string[]>;
 
@@ -168,17 +167,7 @@ export const associations = pgTable("Associations", {
         .notNull()
         .unique()
         .references(() => ldapInfo.ldapUsername),
-    neptunLink: jsonb("neptunLink").$type<CalendarLink | null>(),
-    moodleLink: jsonb("moodleLink").$type<CalendarLink | null>(),
-    extras: jsonb("extras").$type<CalendarLink[]>().notNull().default([]),
     mergedCalendarHash: text("mergedCalendarHash"),
-    neptunLastSyncedAt: timestamp("neptunLastSyncedAt"),
-    moodleLastSyncedAt: timestamp("moodleLastSyncedAt"),
-    extrasLastSyncedAt: jsonb("extrasLastSyncedAt")
-        .$type<Record<string, string>>()
-        .notNull()
-        .default({}),
-    onboardingDone: boolean("onboardingDone").notNull().default(false),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
