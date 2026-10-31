@@ -3,7 +3,7 @@ import {mkdir, readFile, writeFile} from "node:fs/promises";
 import path from "node:path";
 import {eq} from "drizzle-orm";
 import {db} from "../db";
-import {associations, ldapInfo} from "../db/schema";
+import {associations, calendarLinks, ldapInfo} from "../db/schema";
 import type {CalendarLink} from "#shared/types/calendar";
 
 const CALENDARS_DIR = process.env.CALENDARS_DIR || "/data/calendars";
@@ -75,13 +75,32 @@ export function hashContent(content: string): string {
     return createHash("sha256").update(content).digest("hex");
 }
 
+/** Writes the merged calendar file for a user. */
+async function writeMergedCalendar(userId: number, content: string): Promise<void> {
+    const userDir = path.join(CALENDARS_DIR, String(userId));
+    await mkdir(userDir, {recursive: true});
+    await writeFile(path.join(userDir, "calendar.ics"), content, "utf-8");
+}
+
+/** Stores the merged calendar hash, creating the Associations row if the user has none yet. */
+async function saveMergedHash(ldapUsername: string, hash: string): Promise<void> {
+    await db
+        .insert(associations)
+        .values({ldapUsername, mergedCalendarHash: hash})
+        .onConflictDoUpdate({
+            target: associations.ldapUsername,
+            set: {mergedCalendarHash: hash},
+        });
+}
+
 /**
- * Sync a user's calendar: fetch enabled sources, merge, and only write
+ * Sync a user's calendar: fetch every link, merge, and only write
  * to disk if the merged hash has changed.
  */
 export async function syncUserCalendar(
     ldapUsername: string,
-    options: {
+    // Not used yet: the worker will pass which links are due.
+    _options: {
         forceAll?: boolean;
         syncNeptun?: boolean;
         syncMoodle?: boolean;
@@ -94,128 +113,52 @@ export async function syncUserCalendar(
         .where(eq(ldapInfo.ldapUsername, ldapUsername));
     if (!user) return null;
 
+    // A user who only used the v2 endpoints may not have an Associations row yet.
     const [assoc] = await db
-        .select()
+        .select({mergedCalendarHash: associations.mergedCalendarHash})
         .from(associations)
         .where(eq(associations.ldapUsername, ldapUsername));
-    if (!assoc) return null;
+    const previousHash = assoc?.mergedCalendarHash ?? null;
 
-    const hasAnySource =
-    !!assoc.neptunLink?.url ||
-    !!assoc.moodleLink?.url ||
-    (assoc.extras?.length ?? 0) > 0;
+    const links = await db
+        .select()
+        .from(calendarLinks)
+        .where(eq(calendarLinks.userId, user.id));
 
-    // No sources configured: replace the old merged file with an empty calendar.
-    if (!hasAnySource) {
-        const empty = mergeIcs([]);
-        const newHash = hashContent(empty);
-        if (newHash === assoc.mergedCalendarHash) {
-            return {changed: false, userId: user.id};
-        }
-        const userDir = path.join(CALENDARS_DIR, String(user.id));
-        await mkdir(userDir, {recursive: true});
-        await writeFile(path.join(userDir, "calendar.ics"), empty, "utf-8");
-        await db
-            .update(associations)
-            .set({mergedCalendarHash: newHash})
-            .where(eq(associations.ldapUsername, ldapUsername));
-        return {changed: true, userId: user.id};
-    }
-
-    const sources: string[] = [];
     const now = new Date();
-    const updates: Partial<typeof associations.$inferInsert> = {};
-    const extrasLastSynced = {...(assoc.extrasLastSyncedAt || {})};
+    const sources: string[] = [];
 
-    // Neptun
-    if (assoc.neptunLink?.url) {
-        if (options.forceAll || options.syncNeptun) {
-            const ics = await fetchIcs(assoc.neptunLink.url);
-            if (ics) {
-                sources.push(ics);
-                updates.neptunLastSyncedAt = now;
-            }
-        }
-    }
-
-    // Moodle
-    if (assoc.moodleLink?.url) {
-        if (options.forceAll || options.syncMoodle) {
-            const ics = await fetchIcs(assoc.moodleLink.url);
-            if (ics) {
-                sources.push(ics);
-                updates.moodleLastSyncedAt = now;
-            }
-        }
-    }
-
-    // Extras
-    for (const extra of assoc.extras || []) {
-        const shouldSync =
-            options.forceAll || options.syncExtraUrls?.includes(extra.url);
-        if (!shouldSync) continue;
-        const ics = await fetchIcs(extra.url);
+    for (const link of links) {
+        const ics = await fetchIcs(link.url);
         if (ics) {
             sources.push(ics);
-            extrasLastSynced[extra.url] = now.toISOString();
+            await db
+                .update(calendarLinks)
+                .set({lastSyncedAt: now, lastError: null})
+                .where(eq(calendarLinks.id, link.id));
+        } else {
+            await db
+                .update(calendarLinks)
+                .set({lastError: "Nem sikerült letölteni a naptárat."})
+                .where(eq(calendarLinks.id, link.id));
         }
     }
 
-    // If no sources were fetched this run, but file exists, nothing to do.
-    if (sources.length === 0) {
+    // Every link failed (e.g. network down): keep the old file instead of wiping all events.
+    if (links.length > 0 && sources.length === 0) {
         return {changed: false, userId: user.id};
     }
 
-    // For proper merge we need *all* current sources, not just the ones we
-    // just synced. Re-fetch the rest from disk cache if we can, or re-fetch.
-    // Simpler approach: always fetch all configured sources when merging.
-    // Override: fetch any missing sources now to ensure a complete merge.
-    const allSources: string[] = [];
-    if (assoc.neptunLink?.url) {
-        const ics =
-            updates.neptunLastSyncedAt
-                ? sources.shift() // already fetched
-                : await fetchIcs(assoc.neptunLink.url);
-        if (ics) allSources.push(ics);
-    }
-    if (assoc.moodleLink?.url) {
-        const ics =
-            updates.moodleLastSyncedAt
-                ? sources.shift()
-                : await fetchIcs(assoc.moodleLink.url);
-        if (ics) allSources.push(ics);
-    }
-    for (const extra of assoc.extras || []) {
-        if (extrasLastSynced[extra.url] === now.toISOString()) {
-            const ics = sources.shift();
-            if (ics) allSources.push(ics);
-        } else {
-            const ics = await fetchIcs(extra.url);
-            if (ics) allSources.push(ics);
-        }
-    }
-
-    const merged = mergeIcs(allSources);
+    // With no links this is an empty calendar, which clears the old events.
+    const merged = mergeIcs(sources);
     const newHash = hashContent(merged);
-
-    let changed = false;
-    if (newHash !== assoc.mergedCalendarHash) {
-        const userDir = path.join(CALENDARS_DIR, String(user.id));
-        await mkdir(userDir, {recursive: true});
-        const filePath = path.join(userDir, "calendar.ics");
-        await writeFile(filePath, merged, "utf-8");
-        updates.mergedCalendarHash = newHash;
-        changed = true;
+    if (newHash === previousHash) {
+        return {changed: false, userId: user.id};
     }
 
-    updates.extrasLastSyncedAt = extrasLastSynced;
-
-    await db
-        .update(associations)
-        .set(updates)
-        .where(eq(associations.ldapUsername, ldapUsername));
-
-    return {changed, userId: user.id};
+    await writeMergedCalendar(user.id, merged);
+    await saveMergedHash(ldapUsername, newHash);
+    return {changed: true, userId: user.id};
 }
 
 /**
