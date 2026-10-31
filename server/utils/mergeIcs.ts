@@ -4,7 +4,6 @@ import path from "node:path";
 import {eq} from "drizzle-orm";
 import {db} from "../db";
 import {associations, calendarLinks, ldapInfo} from "../db/schema";
-import type {CalendarLink} from "#shared/types/calendar";
 
 const CALENDARS_DIR = process.env.CALENDARS_DIR || "/data/calendars";
 
@@ -194,45 +193,4 @@ export async function getMergedCalendar(
             return null;
         }
     }
-}
-
-/**
- * Upsert links (used by your existing endpoint).
- */
-export async function upsertLinks(
-    ldapUsername: string,
-    payload: {
-        neptunLink?: CalendarLink | null;
-        moodleLink?: CalendarLink | null;
-        extras?: CalendarLink[];
-    }
-) {
-    const [existing] = await db
-        .select()
-        .from(associations)
-        .where(eq(associations.ldapUsername, ldapUsername));
-
-    if (existing) {
-        await db
-            .update(associations)
-            .set({
-                // Use undefined instead of null coalescing, so null can override existing values (for deletions).
-                neptunLink: payload.neptunLink !== undefined ? payload.neptunLink : existing.neptunLink,
-                moodleLink: payload.moodleLink !== undefined ? payload.moodleLink : existing.moodleLink,
-                extras: payload.extras !== undefined ? payload.extras : existing.extras,
-            })
-            .where(eq(associations.ldapUsername, ldapUsername));
-    } else {
-        await db.insert(associations).values({
-            ldapUsername,
-            neptunLink: payload.neptunLink ?? null,
-            moodleLink: payload.moodleLink ?? null,
-            extras: payload.extras ?? [],
-        });
-    }
-
-    // Trigger an initial sync
-    await syncUserCalendar(ldapUsername, {forceAll: true});
-
-    return {ldapUsername, synced: true};
 }
