@@ -42,14 +42,14 @@ export interface CLassSessionRow {
     capacity: number | null;
 }
 
-export function toKioskClass(row: CLassSessionRow) {
-    return{
+export function toKioskClass(row: ClassSessionRow) {
+    return {
         id: row.id,
         room: row.room,
         subject: row.subject,
         kind: row.kind,
-        startsAt: row.startsAt.toISOString(),
-        endsAt: row.endsAt.toISOString(),
+        start: row.startsAt.toISOString(),
+        end: row.endsAt.toISOString(),
         groups: row.groups,
         instructors: row.instructors,
         capacity: row.capacity,
