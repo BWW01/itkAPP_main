@@ -14,6 +14,8 @@ FROM oven/bun:alpine
 WORKDIR /app
 
 COPY --from=builder /app/server/utils/onlineVideos.ts ./server/utils/onlineVideos.ts
+COPY --from=builder /app/server/utils/kioskClasses.ts ./server/utils/kioskClasses.ts
+COPY --from=builder /app/shared/types/errorCodes.ts ./shared/types/errorCodes.ts
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/scripts ./scripts

@@ -78,7 +78,8 @@ export default defineNuxtConfig({
         ldapUrl: "",
         ldapBaseDn: "",
         adminUsers: "",
-
+        kioskApiKey: "",
+        
         session:{
           password: "",
           cookie: {

@@ -5,6 +5,9 @@ import {
 import {sql} from "drizzle-orm";
 export type LdapRawAttributes = Record<string, string[]>;
 
+export const classKind = pgEnum("ClassKind", ["lab", "practice", "lecture", "other"]);
+
+
 export const curriculumCategoryType = pgEnum("curriculumCategporyType",[
     "MANDATORY",                    //KÖTELEZŐ
     "ELECTIVE",                     //KÖTVÁL
@@ -256,3 +259,20 @@ export const userRoles = pgTable("UserRoles", {
 }, (t) => [
     primaryKey({name: "UserRoles_pk", columns: [t.userId, t.role]})
 ])
+
+export const classSessions = pgTable("ClassSessions", {
+    id: text("id").primaryKey(),
+    room: text("room").notNull(),
+    subject: text("subject").notNull(),
+    kind: classKind("kind").notNull().default("other"),
+    startsAt: timestamp("startsAt", { withTimezone: true }).notNull(),
+    endsAt: timestamp("endsAt", { withTimezone: true }).notNull(),
+    groups: jsonb("groups").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+    instructors: jsonb("instructors").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+    capacity: integer("capacity"),
+    importedAt: timestamp("importedAt", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+    index("ClassSessions_startsAt_idx").on(t.startsAt),
+    index("ClassSessions_room_startsAt_idx").on(t.room, t.startsAt),
+    check("ClassSessions_endsAt_after_startsAt", sql`${t.endsAt} > ${t.startsAt}`),
+]);

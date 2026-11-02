@@ -47,6 +47,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: user_data
+      NUXT_KIOSK_API_KEY: ${KIOSK_API_KEY}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
