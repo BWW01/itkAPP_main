@@ -1,7 +1,7 @@
 import {createHash, timingSafeEqual} from "node:crypto";
 import {z} from "zod";
 
-import {ErrorCode} from "#shared/types/errorCodes";
+import {ErrorCode} from "../../shared/types/errorCodes";
 
 export const KIOSK_KEY_HEADER = "x-kiosk.key";
 
