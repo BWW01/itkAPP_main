@@ -3,7 +3,7 @@ import {z} from "zod";
 
 import {ErrorCode} from "../../shared/types/errorCodes";
 
-export const KIOSK_KEY_HEADER = "x-kiosk.key";
+export const KIOSK_KEY_HEADER = "x-kiosk-key";
 
 export const MAX_KIOSK_QUERY_RANGE_MS = 31 * 24 * 60 * 60 * 1000;
 
