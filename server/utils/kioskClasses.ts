@@ -73,7 +73,7 @@ const classFileItemSchema = z
         path: ["end"],
     })
 export const classesFileSchema = z.object({
-    generatedForm: z.string().optional(),
+    generatedForm: z.union([z.string(), z.array(z.string())]).optional(),
     timezone: z.string().optional(),
     classes: z.array(classFileItemSchema).min(1),
 });
