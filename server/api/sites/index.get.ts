@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
             tags: studentSites.tags,
             claimed: sql<boolean>`${studentSites.userId} is not null`,
             isPhpEnabled: studentSites.isPhpEnabled,
+            color: studentSites.color,
         })
         .from(studentSites)
         .leftJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))

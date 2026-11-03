@@ -219,6 +219,10 @@ export const settings = pgTable("Settings", {
     createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const siteColors = ["itk", "purple", "red", "orange", "amber", "green", "mint"] as const;
+// export type SiteColor = "itk" | "purple" | ...; is done easier below
+export type SiteColor = (typeof siteColors)[number];
+
 export const studentSites = pgTable("StudentSites", {
     id: serial("id").primaryKey(),
     userId: integer("userId")
@@ -233,7 +237,8 @@ export const studentSites = pgTable("StudentSites", {
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
     isPublic: boolean("isPublic").notNull().default(true),
     isPhpEnabled: boolean("isPhpEnabled").notNull().default(false),
-})
+    color: text('color').$type<SiteColor>(),
+});
 
 export const midtermType = pgEnum("MidtermType", ["MIDTERM", "RETAKE", "CONSULTATION"]);
 

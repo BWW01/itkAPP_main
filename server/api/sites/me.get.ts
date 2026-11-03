@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
             category: studentSites.category,
             isPublic: studentSites.isPublic,
             isPhpEnabled: studentSites.isPhpEnabled,
+            color: studentSites.color,
         })
         .from(studentSites)
         .innerJoin(ldapInfo, eq(studentSites.login, ldapInfo.ldapUsername))

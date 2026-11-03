@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { db } from "../../db";
-import { studentSites } from "../../db/schema";
+import { siteColors, studentSites } from "../../db/schema";
 import { ErrorCode } from "#shared/types/errorCodes";
 
 const bodySchema = z.object({
     tags: z.array(z.string().trim()),
     isPublic: z.boolean().optional(),
     isPhpEnabled: z.boolean().optional(),
+    color: z.enum(siteColors).optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -29,6 +30,7 @@ export default defineEventHandler(async (event) => {
             isPublic: parsed.data.isPublic ?? true,
             isPhpEnabled: parsed.data.isPhpEnabled ?? false,
             url: `https://users.itk.ppke.hu/~${user.login}`,
+            color: parsed.data.color,
             updatedAt: new Date(),
         })
         .onConflictDoUpdate({ target: studentSites.login, set: {
@@ -36,13 +38,16 @@ export default defineEventHandler(async (event) => {
             tags: parsed.data.tags,
             isPublic: parsed.data.isPublic ?? true,
             isPhpEnabled: parsed.data.isPhpEnabled ?? false,
+            color: parsed.data.color,
             updatedAt: new Date(),
         }})
         .returning({
+            login: studentSites.login,
             url: studentSites.url,
             tags: studentSites.tags,
             isPublic: studentSites.isPublic,
             isPhpEnabled: studentSites.isPhpEnabled,
+            color: studentSites.color,
         });
 
     return {...site, name: user.name};

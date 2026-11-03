@@ -1,0 +1,1 @@
+ALTER TABLE "StudentSites" ADD COLUMN "color" text;
