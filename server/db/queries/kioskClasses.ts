@@ -9,6 +9,6 @@ export async function findClassSessions(db: Db, from: Date, to: Date) {
     return db
         .select()
         .from(classSessions)
-        .where(and(lt(classSessions.startsAt, to), gt(classSessions.endsAt, from)))
+        .where(and(lte(classSessions.startsAt, now), gt(classSessions.endsAt, now)))
         .orderBy(asc(classSessions.startsAt), asc(classSessions.room));
 }
