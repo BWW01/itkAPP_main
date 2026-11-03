@@ -1,4 +1,4 @@
-import {asc, gt, lt, and} from "drizzle-orm";
+import {asc, gt, lte, and} from "drizzle-orm";
 import type {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 import * as schema from "../schema";
 import {classSessions} from "../schema";
