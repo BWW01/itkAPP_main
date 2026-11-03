@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
     const [site] = await db
         .select({
             name: ldapInfo.fullName,
+            login: studentSites.login,
             url: studentSites.url,
             tags: studentSites.tags,
             category: studentSites.category,
