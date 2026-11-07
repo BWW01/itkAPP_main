@@ -55,7 +55,11 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 409, data: { code: ErrorCode.DUPLICATE_LINK } });
     }
 
-    syncUserCalendar(user.login).catch((e) => console.error("[sync] after change failed:", e));
+    try {
+        await syncUserCalendar(user.login);
+    } catch (e) {
+        console.error("[sync] after change failed:", e);
+    }
     
     setResponseStatus(event, 201);
     return created;
