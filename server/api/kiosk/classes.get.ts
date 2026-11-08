@@ -1,10 +1,13 @@
 import {ErrorCode} from "#shared/types/errorCodes";
 import {db} from "../../db";
-import {findClassSessions} from "../../db/queries/kioskClasses";
+import {findClassSessions, findSubjectCurricula} from "../../db/queries/kioskClasses";
 import {
     KIOSK_KEY_HEADER,
+    buildSubjectIndex,
     kioskClassesQuerySchema,
     kioskKeyMatches,
+    lookupSubject,
+    subjectCodeCandidates,
     toKioskClass,
 } from "../../utils/kioskClasses";
 
@@ -30,5 +33,8 @@ export default defineEventHandler(async (event) => {
         new Date(parsed.data.from),
         new Date(parsed.data.to),
     );
-    return {classes: rows.map(toKioskClass)};
+    const codes = [...new Set(rows.flatMap((r) => subjectCodeCandidates(r.subjectCode)))];
+    const index = buildSubjectIndex(await findSubjectCurricula(db, codes));
+
+    return {classes: rows.map((r) => toKioskClass(r, lookupSubject(index, r.subjectCode)))};
 });

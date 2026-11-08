@@ -275,9 +275,11 @@ export const classSessions = pgTable("ClassSessions", {
     groups: jsonb("groups").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
     instructors: jsonb("instructors").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
     capacity: integer("capacity"),
+    subjectCode: text("subjectCode"),
     importedAt: timestamp("importedAt", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
     index("ClassSessions_startsAt_idx").on(t.startsAt),
     index("ClassSessions_room_startsAt_idx").on(t.room, t.startsAt),
     check("ClassSessions_endsAt_after_startsAt", sql`${t.endsAt} > ${t.startsAt}`),
+    index("ClassSessions_subjectCode_idx").on(t.subjectCode),
 ]);

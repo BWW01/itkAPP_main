@@ -62,6 +62,7 @@ async function main() {
             groups: c.groups,
             instructors: c.instructors,
             capacity: c.capacity ?? null,
+            subjectCode: c.subjectCode ?? null,
         }));
 
         const removed = await db.transaction(async (tx) => {
@@ -80,6 +81,7 @@ async function main() {
                             groups: sql`excluded."groups"`,
                             instructors: sql`excluded."instructors"`,
                             capacity: sql`excluded."capacity"`,
+                            subjectCode: sql`excluded."subjectCode"`,
                             importedAt: sql`now()`,
                         },
                     });
