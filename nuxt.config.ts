@@ -83,7 +83,7 @@ export default defineNuxtConfig({
         session:{
           password: "",
           cookie: {
-            sameSite: "none",
+            sameSite: "lax",
             secure: true,
           },
         },
