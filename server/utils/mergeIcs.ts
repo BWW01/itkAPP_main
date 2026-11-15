@@ -4,12 +4,13 @@ import path from "node:path";
 import {eq} from "drizzle-orm";
 import {db} from "../db";
 import {associations, calendarLinks, ldapInfo} from "../db/schema";
+import { safeFetch } from "./safeFetch";
 
 const CALENDARS_DIR = process.env.CALENDARS_DIR || "/data/calendars";
 
 export async function fetchIcs(url: string): Promise<string | null> {
     try {
-        const res = await fetch(url, {signal: AbortSignal.timeout(30_000)});
+        const res = await safeFetch(url, {signal: AbortSignal.timeout(30_000)});
         if (!res.ok) {
             console.error(`Failed to fetch ${url}: ${res.status}`);
             return null;

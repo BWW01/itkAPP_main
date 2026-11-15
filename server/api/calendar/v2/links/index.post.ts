@@ -4,6 +4,7 @@ import {db} from "#server/db";
 import {calendarLinks, syncInterval} from "#server/db/schema";
 import { z } from "zod";
 import { ErrorCode } from "#shared/types/errorCodes";
+import { assertPublicUrl } from "~~/server/utils/safeFetch";
 
 
 const bodySchema = z.object({
@@ -35,6 +36,12 @@ export default defineEventHandler(async (event) => {
             statusCode: 400,
             data: { code: parsed.error.issues[0]?.message ?? ErrorCode.INVALID_BODY },
         });
+    }
+
+    try {
+        await assertPublicUrl(parsed.data.url);
+    } catch {
+        throw createError({ statusCode: 400, data: { code: ErrorCode.INVALID_URL } });
     }
 
     const [created] = await db
